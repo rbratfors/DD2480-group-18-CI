@@ -45,7 +45,7 @@ public class ContinuousIntegrationServer extends AbstractHandler {
             System.out.println(key);
         }
 
-        String cloneUrl = repo.getString("git_commits_url");
+        String cloneUrl = repo.getString("clone_url");
         System.out.println(cloneUrl);
 
         String branchRef = json.getString("ref");
@@ -56,7 +56,7 @@ public class ContinuousIntegrationServer extends AbstractHandler {
         // 1st clone your repository
 
         try {
-            Git git = Git.cloneRepository().setURI(cloneUrl).call();
+            Git git = Git.cloneRepository().setURI(cloneUrl).setDirectory(new File("./cloned")).call();
             System.out.println("git" + git);
             Repository repository = git.getRepository();
             File root = repository.getWorkTree();
