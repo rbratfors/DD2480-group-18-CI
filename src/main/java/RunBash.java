@@ -16,6 +16,7 @@ import java.util.regex.Matcher;
 public class RunBash {
     static void run() {
         try {
+            // path to file, needs to be changed accordingly
             readThis("repo/bash.txt");
         } catch (Exception e) {
             e.printStackTrace();
@@ -62,6 +63,7 @@ public class RunBash {
 
         ProcessBuilder pb = new ProcessBuilder(arr);
         pb.inheritIO();
+        // Change "repo" the the repo where the file is located
         pb.directory(new File("repo"));
         pb.start();
     }
