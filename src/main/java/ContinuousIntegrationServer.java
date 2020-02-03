@@ -7,6 +7,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.AbstractHandler;
+import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.api.errors.GitAPIException;
 import org.json.JSONObject;
 
 
@@ -47,13 +49,13 @@ public class ContinuousIntegrationServer extends AbstractHandler
         // here you do all the continuous integration tasks
         // for example
         // 1st clone your repository
-        /*
+        
         try {
-            Git git = Git.cloneRepository().setURI("https://github.com/eclipse/jgit.git").call();
+            Git git = Git.cloneRepository().setURI(cloneUrl).call();
         } catch (GitAPIException e) {
             e.printStackTrace();
         }
-        */
+        
 
         // 2nd compile the code
 
