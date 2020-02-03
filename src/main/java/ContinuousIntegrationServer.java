@@ -9,6 +9,7 @@ import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.AbstractHandler;
 import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.api.ListBranchCommand.ListMode;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.lib.Ref;
 import org.json.JSONObject;
@@ -45,6 +46,8 @@ public class ContinuousIntegrationServer extends AbstractHandler
         String cloneUrl = repo.getString("clone_url");
         System.out.println(cloneUrl);
 
+        String branchRef = json.getString("ref");
+
 
 
 
@@ -55,10 +58,9 @@ public class ContinuousIntegrationServer extends AbstractHandler
         // Try it again!
         
         try {
-            Git git = Git.cloneRepository().setURI(cloneUrl).call();
-            List<Ref> branches = git.branchList().call();
+            Git git = Git.cloneRepository().setURI(cloneUrl).setBranch(branchRef).call();
+            List<Ref> branches = git.branchList().setListMode(ListMode.ALL).call();
             for (Ref branch : branches) {
-                System.out.println("bla");
                 System.out.println(branch.getName());
             }
         } catch (GitAPIException e) {
