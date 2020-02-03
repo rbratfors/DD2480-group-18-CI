@@ -1,0 +1,24 @@
+plugins {
+    id 'war'
+    id 'application'
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+    providedCompile 'javax.servlet:javax.servlet-api:3.1.0'
+    providedCompile 'org.eclipse.jetty.aggregate:jetty-all:9.4.9.v20180320'
+    providedCompile 'com.github.blindpirate.gogradle.jgit:org.eclipse.jgit:4.7.1'
+    testCompile 'junit:junit:4.13'
+}
+
+application {
+    mainClassName = 'ContinuousIntegrationServer'
+}
