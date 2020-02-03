@@ -68,6 +68,13 @@ public class ContinuousIntegrationServer extends AbstractHandler {
                 System.out.println(f.getPath());
             }
 
+            Boolean hasBuildFile = false;
+            for (File f : rootFiles) {
+                hasBuildFile |= f.getPath() == "./cloned/.dd.yml";
+            }
+
+            System.out.println("Has build file: " + hasBuildFile);
+
             String desc = git.describe().call();
             System.out.println("bla " + desc);
             List<Ref> branches = git.branchList().setListMode(ListMode.ALL).call();
