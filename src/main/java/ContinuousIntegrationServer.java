@@ -46,12 +46,12 @@ public class ContinuousIntegrationServer extends AbstractHandler
         String cloneUrl = repo.getString("clone_url");
         System.out.println(cloneUrl);
 
-        JSONObject ref = json.getJSONObject("ref");
+        JSONObject ref = repo.getJSONObject("ref");
         for (String key : ref.keySet()) {
             System.out.println(key);
         }
 
-        String branchRef = json.getString("ref");
+        String branchRef = repo.getString("ref");
         System.out.println(branchRef);
 
 
