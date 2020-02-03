@@ -82,31 +82,11 @@ public class ContinuousIntegrationServer extends AbstractHandler {
 
             System.out.println("Has build file: " + hasBuildFile);
 
-            String desc = git.describe().call();
-            System.out.println("bla " + desc);
-            List<Ref> branches = git.branchList().setListMode(ListMode.ALL).call();
-            for (Ref branch : branches) {
-                System.out.println(branch.getName());
-            }
-
-            ObjectId head  = repository.resolve(Constants.HEAD);
-
-            try (RevWalk revWalk = new RevWalk(repository)) {
-                RevCommit commit = revWalk.parseCommit(head);
-    
-                System.out.println("Time of commit (seconds since epoch): " + commit.getCommitTime());
-    
-                // and using commit's tree find the path
-                RevTree tree = commit.getTree();
-                System.out.println("Having tree: " + tree);
-            }
-
-            root.delete();
+            System.out.println("Deleted: " + root.delete());
             
         } catch (GitAPIException e) {
             e.printStackTrace();
         }
-        
 
         // 2nd compile the code
 
