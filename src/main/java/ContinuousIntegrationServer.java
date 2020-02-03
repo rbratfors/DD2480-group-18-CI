@@ -1,4 +1,5 @@
 import java.io.IOException;
+import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -9,6 +10,7 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.AbstractHandler;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
+import org.eclipse.jgit.lib.Ref;
 import org.json.JSONObject;
 
 
@@ -54,6 +56,10 @@ public class ContinuousIntegrationServer extends AbstractHandler
         
         try {
             Git git = Git.cloneRepository().setURI(cloneUrl).call();
+            List<Ref> branches = git.branchList().call();
+            for (Ref branch : branches) {
+                System.out.println(branch.getName());
+            }
         } catch (GitAPIException e) {
             e.printStackTrace();
         }
