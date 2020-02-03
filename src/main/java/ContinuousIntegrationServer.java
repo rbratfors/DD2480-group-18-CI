@@ -65,78 +65,11 @@ public class ContinuousIntegrationServer extends AbstractHandler
         }
         response.getWriter().println("CI job done.");
     }
-    
-    private static void output(String cmd, InputStream ins) throws Exception {
-        String line = null;
-        BufferedReader in = new BufferedReader(
-            new InputStreamReader(ins));
-        while ((line = in.readLine()) != null) {
-            System.out.println(cmd + " " + line);
-        }
-    }
-
-    private static void readThis(String path) throws Exception {
-        BufferedReader reader;
-        try {
-            reader = new BufferedReader(new FileReader(path));
-            String line = reader.readLine();
-            while (line != null) {
-                if (exactMatch(line, "Build")){
-                    //runCommand(line);
-                    line = reader.readLine();
-                    if(line != null) {
-                        runCommand(line);
-                    }
-
-                    // read next line
-                }
-                line = reader.readLine();
-
-            }
-            reader.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private static boolean exactMatch(String line, String match){
-         String pattern = "\\b"+match+"\\b";
-         Pattern p=Pattern.compile(pattern);
-         Matcher m=p.matcher(line);
-         return m.find();
-    }
-
-
-    private static void runCommand(String line) throws Exception {
-
-        String[] arr = line.split(" ");
-
-        /*
-        Process p = Runtime.getRuntime().exec(command);
-        output("stdout:", p.getInputStream());
-        output("stderr:", p.getErrorStream());
-        p.waitFor();
-        */
-        arr[0] = "./gradlew";
-        arr[1] = "build";
-
-        ProcessBuilder pb = new ProcessBuilder(arr);
-        pb.inheritIO();
-        pb.directory(new File("repo"));
-        pb.start();
-    }
 
     // used to start the CI server in command line
     public static void main(String[] args) throws Exception
     {   
-
-        try {
-            readThis("repo/bash.txt");
-            //runCommand("javac src/main/java/Test.java");
-            //runCommand("java -classpath src/main/java/ Test Print this sentence");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        RunBash.run();
         /*
         Server server = new Server(8018);
         server.setHandler(new ContinuousIntegrationServer()); 
