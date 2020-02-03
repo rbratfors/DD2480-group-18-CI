@@ -22,6 +22,8 @@ import org.eclipse.jgit.revwalk.RevWalk;
 import org.eclipse.jgit.treewalk.TreeWalk;
 import org.json.JSONObject;
 
+import java.util.UUID;
+
 /**
  * Skeleton of a ContinuousIntegrationServer which acts as webhook See the Jetty
  * documentation for API documentation of those classes.
@@ -57,8 +59,11 @@ public class ContinuousIntegrationServer extends AbstractHandler {
 
         // yaya
 
+        String folderName = UUID.randomUUID().toString();
+        String buildFileName = ".dd.yml";
+
         try {
-            Git git = Git.cloneRepository().setURI(cloneUrl).setDirectory(new File("./cloned")).setBranch(branchRef).call();
+            Git git = Git.cloneRepository().setURI(cloneUrl).setDirectory(new File("./" + folderName)).setBranch(branchRef).call();
             Repository repository = git.getRepository();
             System.out.println(repository.getBranch());
             System.out.println(repository.getFullBranch());
@@ -72,7 +77,7 @@ public class ContinuousIntegrationServer extends AbstractHandler {
 
             Boolean hasBuildFile = false;
             for (File f : rootFiles) {
-                hasBuildFile |= f.getPath().equals("./cloned/.dd.yml");
+                hasBuildFile |= f.getPath().equals("./" + folderName + "/" + buildFileName);
             }
 
             System.out.println("Has build file: " + hasBuildFile);
@@ -95,6 +100,8 @@ public class ContinuousIntegrationServer extends AbstractHandler {
                 RevTree tree = commit.getTree();
                 System.out.println("Having tree: " + tree);
             }
+
+            root.delete();
             
         } catch (GitAPIException e) {
             e.printStackTrace();
