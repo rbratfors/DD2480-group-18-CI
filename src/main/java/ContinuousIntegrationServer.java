@@ -34,9 +34,9 @@ public class ContinuousIntegrationServer extends AbstractHandler
         System.out.println(target);
 
         JSONObject json = new JSONObject(request.getParameter("payload"));
-        for (String key : json.keySet()) {
-            System.out.println(key);
-        }
+        // for (String key : json.keySet()) {
+        //     System.out.println(key);
+        // }
 
         JSONObject repo = json.getJSONObject("repository");
         for (String key : repo.keySet()) {
@@ -44,15 +44,15 @@ public class ContinuousIntegrationServer extends AbstractHandler
         }
 
         String cloneUrl = repo.getString("clone_url");
-        System.out.println(cloneUrl);
+        // System.out.println(cloneUrl);
 
         JSONObject ref = repo.getJSONObject("ref");
-        for (String key : ref.keySet()) {
-            System.out.println(key);
-        }
+        // for (String key : ref.keySet()) {
+        //     System.out.println(key);
+        // }
 
         String branchRef = repo.getString("ref");
-        System.out.println(branchRef);
+        // System.out.println(branchRef);
 
 
 
