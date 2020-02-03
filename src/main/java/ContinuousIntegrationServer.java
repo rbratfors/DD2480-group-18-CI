@@ -28,7 +28,6 @@ public class ContinuousIntegrationServer extends AbstractHandler
 
         System.out.println(target);
 
-        //..stuff
         JSONObject json = new JSONObject(request.getParameter("payload"));
         for (String key : json.keySet()) {
             System.out.println(key);
