@@ -76,9 +76,26 @@ public class Storage {
     }
 
     /**
-     * Fetches a specific commit from the data object
+     * Fetches a specific commit from the data object.
+     * @param id id of commit to get
+     * @return object with given id or empty object if not found
      */
-    public void get() {
+    public JSONObject get(String id) throws IOException {
+        File db = new File(fileName);
+        if (!db.exists()) {
+            throw new IOException("Database file not found");
+        } else {
+            JSONObject dbJSON = parseJSON(fileName);
 
+            // Try to get object, if it doesn't exist then return empty
+            JSONObject rv;
+            try {
+                rv = dbJSON.getJSONObject(id);
+            } catch (JSONException e) {
+                rv = new JSONObject();
+            }
+            
+            return rv;
+        }
     }
 }
