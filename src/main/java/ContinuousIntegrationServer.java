@@ -55,8 +55,6 @@ public class ContinuousIntegrationServer extends AbstractHandler {
         // for example
         // 1st clone your repository
 
-        //try again
-
         try {
             Git git = Git.cloneRepository().setURI(cloneUrl).setDirectory(new File("./cloned")).call();
             Repository repository = git.getRepository();
