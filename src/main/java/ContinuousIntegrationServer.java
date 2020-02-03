@@ -57,6 +57,8 @@ public class ContinuousIntegrationServer extends AbstractHandler
         
         try {
             Git git = Git.cloneRepository().setURI(cloneUrl).setBranch(branchRef).call();
+            String desc = git.describe().call();
+            System.out.println(desc);
             List<Ref> branches = git.branchList().setListMode(ListMode.ALL).call();
             for (Ref branch : branches) {
                 System.out.println(branch.getName());
