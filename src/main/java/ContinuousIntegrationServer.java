@@ -49,6 +49,8 @@ public class ContinuousIntegrationServer extends AbstractHandler
         // here you do all the continuous integration tasks
         // for example
         // 1st clone your repository
+
+        // Try it again!
         
         try {
             Git git = Git.cloneRepository().setURI(cloneUrl).call();
