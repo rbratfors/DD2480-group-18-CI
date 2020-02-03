@@ -1,14 +1,13 @@
+import java.io.IOException;
+
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.ServletException;
- 
-import java.io.IOException;
- 
-import org.eclipse.jetty.server.Server;
+
 import org.eclipse.jetty.server.Request;
+import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.AbstractHandler;
-import org.eclipse.jgit.api.Git;
-import org.eclipse.jgit.api.errors.GitAPIException;
+import org.json.JSONObject;
 
 
 /** 
@@ -30,6 +29,12 @@ public class ContinuousIntegrationServer extends AbstractHandler
         System.out.println(target);
 
         //..stuff
+        JSONObject json = new JSONObject(request.getParameter("payload"));
+        for (String key : json.keySet()) {
+            System.out.println(key);
+        }
+
+
 
         // here you do all the continuous integration tasks
         // for example
