@@ -34,6 +34,12 @@ public class ContinuousIntegrationServer extends AbstractHandler
             System.out.println(key);
         }
 
+        JSONObject repo = json.getJSONObject("repository");
+        for (String key : repo.keySet()) {
+            System.out.println(key);
+        }
+
+
 
 
         // here you do all the continuous integration tasks
