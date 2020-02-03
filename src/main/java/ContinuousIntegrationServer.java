@@ -70,7 +70,7 @@ public class ContinuousIntegrationServer extends AbstractHandler {
 
             Boolean hasBuildFile = false;
             for (File f : rootFiles) {
-                hasBuildFile |= f.getPath() == "./cloned/.dd.yml";
+                hasBuildFile |= f.getPath().equals("./cloned/.dd.yml");
             }
 
             System.out.println("Has build file: " + hasBuildFile);
