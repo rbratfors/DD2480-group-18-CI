@@ -45,7 +45,7 @@ public class ContinuousIntegrationServer extends AbstractHandler {
             System.out.println(key);
         }
 
-        String cloneUrl = repo.getString("clone_url");
+        String cloneUrl = repo.getString("git_commits_url");
         System.out.println(cloneUrl);
 
         String branchRef = json.getString("ref");
