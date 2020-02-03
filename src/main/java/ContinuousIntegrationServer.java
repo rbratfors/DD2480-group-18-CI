@@ -1,3 +1,4 @@
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
@@ -12,6 +13,7 @@ import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.ListBranchCommand.ListMode;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.lib.Ref;
+import org.eclipse.jgit.lib.Repository;
 import org.json.JSONObject;
 
 
@@ -44,12 +46,7 @@ public class ContinuousIntegrationServer extends AbstractHandler
         }
 
         String cloneUrl = repo.getString("clone_url");
-        // System.out.println(cloneUrl);
-
-        // JSONObject ref = json.getJSONObject("ref");
-        // for (String key : ref.keySet()) {
-        //     System.out.println(key);
-        // }
+        System.out.println(cloneUrl);
 
         String branchRef = json.getString("ref");
         System.out.println(branchRef);
@@ -63,6 +60,14 @@ public class ContinuousIntegrationServer extends AbstractHandler
         
         try {
             Git git = Git.cloneRepository().setURI(cloneUrl).setBranch(branchRef).call();
+            Repository repository = git.getRepository();
+            File root = repository.getWorkTree();
+            File[] rootFiles = root.listFiles();
+
+            for (File f : rootFiles) {
+                System.out.println(f.getPath());
+            }
+
             String desc = git.describe().call();
             System.out.println("bla " + desc);
             List<Ref> branches = git.branchList().setListMode(ListMode.ALL).call();
