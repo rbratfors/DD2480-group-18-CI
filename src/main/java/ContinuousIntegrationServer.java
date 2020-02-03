@@ -59,6 +59,7 @@ public class ContinuousIntegrationServer extends AbstractHandler {
             Git git = Git.cloneRepository().setURI(cloneUrl).setDirectory(new File("./cloned")).call();
             Repository repository = git.getRepository();
             System.out.println(repository.getBranch());
+            System.out.println(repository.getFullBranch());
 
             File root = repository.getWorkTree();
             File[] rootFiles = root.listFiles();
