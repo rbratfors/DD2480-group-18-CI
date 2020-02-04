@@ -14,10 +14,9 @@ import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 
 public class RunBash {
-    static void run() {
+    static void run(String path) {
         try {
-            // path to file, needs to be changed accordingly
-            readThis("repo/bash.txt");
+            readThis(path);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -27,13 +26,13 @@ public class RunBash {
     private static void readThis(String path) throws Exception {
         BufferedReader reader;
         try {
-            reader = new BufferedReader(new FileReader(path));
+            reader = new BufferedReader(new FileReader(path + "bash.txt"));
             String line = reader.readLine();
             while (line != null) {
                 if (exactMatch(line, "Build") || exactMatch(line, "Test") ) {
                     line = reader.readLine();
                     if (line != null) {
-                        runCommand(line);
+                        runCommand(line, path);
                     }
 
                     // read next line
@@ -55,15 +54,14 @@ public class RunBash {
     }
 
 
-    private static void runCommand(String line) throws Exception {
+    private static void runCommand(String line, String path) throws Exception {
 
         String[] arr = line.split(" ");
 
 
         ProcessBuilder pb = new ProcessBuilder(arr);
         pb.inheritIO();
-        // Change "repo" the the repo where the file is located
-        pb.directory(new File("repo"));
+        pb.directory(new File(path));
         pb.start();
     }
 }

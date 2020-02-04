@@ -1,9 +1,9 @@
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.ServletException;
- 
+
 import java.io.IOException;
- 
+
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.handler.AbstractHandler;
@@ -13,8 +13,6 @@ import org.eclipse.jgit.api.errors.GitAPIException;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-
-
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -43,6 +41,8 @@ public class ContinuousIntegrationServer extends AbstractHandler
 
         System.out.println(target);
 
+        String repoDir = "repo/";
+        
         // here you do all the continuous integration tasks
         // for example
         // 1st clone your repository
@@ -53,8 +53,13 @@ public class ContinuousIntegrationServer extends AbstractHandler
             e.printStackTrace();
         }
         */
+        // 2nd set pending status on repo
+        
 
-        // 2nd compile the code
+        // 3rd compile the code
+        RunBash.run(repoDir);
+
+        // 4th set status depending on compilation success
 
         response.getWriter().println("CI job done.");
     }
@@ -62,12 +67,12 @@ public class ContinuousIntegrationServer extends AbstractHandler
     // used to start the CI server in command line
     public static void main(String[] args) throws Exception
     {   
-        RunBash.run();
-        /*
+        //RunBash.run(repoDir);
+    /*
         Server server = new Server(8018);
-        server.setHandler(new ContinuousIntegrationServer()); 
+        server.setHandler(new ContinuousIntegrationServer());
         server.start();
         server.join();
-        */
+     */
     }
 }
