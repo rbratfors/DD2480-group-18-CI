@@ -1,7 +1,0 @@
-asfassad
-asfaff
-Build
-./gradlew build
-afaf
-Buildo
-asfasf
