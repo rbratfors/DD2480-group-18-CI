@@ -8,6 +8,8 @@ import org.eclipse.jgit.lib.Repository;
 public class BuildJob {
   public static String BUILD_CONFIG_FILE_NAME = ".dd.yml";
   public static void run(String jobID, String cloneURL, String branchRef) {
+    // TODO: update database that status is "started"
+
     try {
     Git git = Git.cloneRepository()
       .setURI(cloneURL)
@@ -24,6 +26,12 @@ public class BuildJob {
     for (File f : rootFiles) {
         hasBuildFile |= f.getPath().equals("./" + jobID + "/" + BUILD_CONFIG_FILE_NAME);
     }
+
+    // TODO:
+    // if hasBuildFile:
+    //   [status, log] = call RunBash.run(f.getPath())
+    //   Update database with status and log
+    //   Call notification engine
 
   } catch (GitAPIException e) {
     e.printStackTrace();
