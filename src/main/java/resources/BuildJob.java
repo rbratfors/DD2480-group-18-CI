@@ -10,15 +10,20 @@ public class BuildJob {
   public static void run(String jobID, String cloneURL, String branchRef) {
     // TODO: update database that status is "started"
 
+    Git git = null;
     try {
-    Git git = Git.cloneRepository()
+    git = Git.cloneRepository()
       .setURI(cloneURL)
       .setDirectory(new File("./" + jobID))
       .setBranch(branchRef)
       .call();
 
-    Repository repository = git.getRepository();
+    } catch (GitAPIException e) {
+      e.printStackTrace();
+      BuildJob.fail(jobID, "Failed to clone repository " + cloneURL);
+    }
 
+    Repository repository = git.getRepository();
     File root = repository.getWorkTree();
     File[] rootFiles = root.listFiles();
 
@@ -30,11 +35,33 @@ public class BuildJob {
     // TODO:
     // if hasBuildFile:
     //   [status, log] = call RunBash.run(f.getPath())
-    //   Update database with status and log
-    //   Call notification engine
 
-  } catch (GitAPIException e) {
-    e.printStackTrace();
+    // Mock, should be a call to RunBash.run
+    if (hasBuildFile) {
+      BuildJob.success(jobID, "Found build file.");
+    } else {
+      BuildJob.fail(jobID, "Failed to find a build file.");
+    }
   }
+
+  public static void fail(String jobID, String log) {
+    // TODO:
+    // Update database with status and log
+    // Call notification engine
+    
+    // Mock:
+    System.out.println("Failed job " + jobID + " with log ");
+    System.out.println(log);
+
+  }
+
+  public static void success(String jobID, String log) {
+    // TODO:
+    // Update database with status and log
+    // Call notification engine
+
+    // Mock:
+    System.out.println("Succeeded job " + jobID + " with log ");
+    System.out.println(log);
   }
 }
