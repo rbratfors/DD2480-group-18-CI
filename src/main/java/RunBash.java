@@ -31,7 +31,6 @@ public class RunBash {
             String line = reader.readLine();
             while (line != null) {
                 if (exactMatch(line, "Build") || exactMatch(line, "Test") ) {
-                    //runCommand(line);
                     line = reader.readLine();
                     if (line != null) {
                         runCommand(line);

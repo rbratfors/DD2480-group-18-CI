@@ -57,13 +57,6 @@ public class ContinuousIntegrationServer extends AbstractHandler
         // 2nd compile the code
 
         response.getWriter().println("CI job done.");
-        try {
-            //runCommand("javac src/main/java/Test.java");
-            //runCommand("java -classpath src/main/java/ Test Print this sentence");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        response.getWriter().println("CI job done.");
     }
 
     // used to start the CI server in command line
