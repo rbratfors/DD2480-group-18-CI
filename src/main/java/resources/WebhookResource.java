@@ -2,6 +2,8 @@ package resources;
 
 import org.json.JSONObject;
 
+import java.util.UUID;
+
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
 
@@ -49,21 +51,25 @@ public class WebhookResource {
         // TODO
         // 1. set commit status to pending
         // 2. clone repository
-        /*
-        try {
-            Git git = Git.cloneRepository().setURI("https://github.com/eclipse/jgit.git").call();
-        } catch (GitAPIException e) {
-            e.printStackTrace();
-        }
-        */
         // 3. build
         // 4. run tests
         // 5. store build data
         // 6. set commit status to success/fail/error
 
+        // here you do all the continuous integration tasks
+        // for example
+        // 1st clone your repository
+
+        String jobID = UUID.randomUUID().toString();
+
         JSONObject json = new JSONObject(payload);
-        String cloneURL = json.getJSONObject("repository").getString("clone_url");
-        System.out.println(cloneURL);
+        JSONObject repository = json.getJSONObject("repository");
+
+        String branchRef = json.getString("ref");
+        String cloneURL = repository.getString("clone_url");
+
+        // Run job, should be done as an ExecutorService
+        BuildJob.run(jobID, cloneURL, branchRef);
 
         return Response.status(200).build();
     }
