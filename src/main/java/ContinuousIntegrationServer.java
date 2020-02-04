@@ -22,6 +22,7 @@ import java.io.File;
 
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
+import java.util.*;
 
 /** 
  Skeleton of a ContinuousIntegrationServer which acts as webhook
@@ -57,17 +58,40 @@ public class ContinuousIntegrationServer extends AbstractHandler
         
 
         // 3rd compile the code
-        RunBash.run(repoDir);
+        //RunBash.run(repoDir);
 
         // 4th set status depending on compilation success
 
         response.getWriter().println("CI job done.");
     }
 
+    // prints output, errors and exit value of bash executions
+    private static void printBash(ArrayList<ArrayList<String>> commands) {
+        int exitValue;
+        ArrayList<Integer> exitValues = new ArrayList<Integer>();
+        int i = 1;
+        for(ArrayList<String> cmd : commands) {
+            int ev = Integer.parseInt(cmd.get(cmd.size()-1));
+            exitValues.add(ev);
+            System.out.println("**************************");
+            System.out.println("Command " + i);
+            cmd.remove(cmd.size()-1);
+            for(String s : cmd) {
+                System.out.println(s);
+            }
+            System.out.println("Exit value: " + ev);
+            System.out.println("**************************");
+            i++;
+        }
+    }
+
     // used to start the CI server in command line
     public static void main(String[] args) throws Exception
     {   
-        //RunBash.run(repoDir);
+        // Test call to run bash
+        String repoDir = "repo/";
+        ArrayList<ArrayList<String>> commands = RunBash.run(repoDir);
+        printBash(commands);
     /*
         Server server = new Server(8018);
         server.setHandler(new ContinuousIntegrationServer());
