@@ -61,27 +61,26 @@ public class ContinuousIntegrationServer extends AbstractHandler {
         String buildFileName = ".dd.yml";
 
         try {
-            // Git git = Git.cloneRepository().setURI(cloneUrl).setDirectory(new File("./" + folderName)).setBranch(branchRef).call();
             Git git = Git.cloneRepository().setURI(cloneUrl).setDirectory(new File("./" + folderName)).setBranch(branchRef).call();
-            // Repository repository = git.getRepository();
-            // System.out.println(repository.getBranch());
-            // System.out.println(repository.getFullBranch());
+            Repository repository = git.getRepository();
+            System.out.println(repository.getBranch());
+            System.out.println(repository.getFullBranch());
 
-            // File root = repository.getWorkTree();
-            // File[] rootFiles = root.listFiles();
+            File root = repository.getWorkTree();
+            File[] rootFiles = root.listFiles();
 
-            // for (File f : rootFiles) {
-            //     System.out.println(f.getPath());
-            // }
+            for (File f : rootFiles) {
+                System.out.println(f.getPath());
+            }
 
-            // Boolean hasBuildFile = false;
-            // for (File f : rootFiles) {
-            //     hasBuildFile |= f.getPath().equals("./" + folderName + "/" + buildFileName);
-            // }
+            Boolean hasBuildFile = false;
+            for (File f : rootFiles) {
+                hasBuildFile |= f.getPath().equals("./" + folderName + "/" + buildFileName);
+            }
 
-            // System.out.println("Has build file: " + hasBuildFile);
+            System.out.println("Has build file: " + hasBuildFile);
 
-            // System.out.println("Deleted: " + root.delete());
+            System.out.println("Deleted: " + root.delete());
             
         } catch (GitAPIException e) {
             e.printStackTrace();
