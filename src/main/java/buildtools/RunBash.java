@@ -20,7 +20,7 @@ public class RunBash {
     // tmp desc: "main" file, returns the output of all commands
     // buildDirectoryPath - the relative path to the directory which commands are run in
     // buildConfigPath - the relative path to the build configuration file
-    static ArrayList<ArrayList<String>> run(String buildDirectoryPath, String buildConfigPath) {
+    public static ArrayList<ArrayList<String>> run(String buildDirectoryPath, String buildConfigPath) {
         ArrayList<ArrayList<String>> commands = new ArrayList<ArrayList<String>>();
         try {
             commands = readThis(buildDirectoryPath, buildConfigPath);
