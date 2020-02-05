@@ -12,6 +12,7 @@ public class BuildJob {
   public static String BUILD_CONFIG_FILE_NAME = ".dd.yml";
   public static void run(String jobID, String cloneURL, String branchRef) {
     // TODO: update database that status is "started"
+    System.out.println("Running build job with id " + jobID);
 
     Git git = null;
     try {
@@ -49,6 +50,8 @@ public class BuildJob {
     } else {
       BuildJob.fail(jobID, "Failed to find a build file.");
     }
+
+    System.out.println("Finished build job with id " + jobID);
   }
 
   public static void fail(String jobID, String log) {
