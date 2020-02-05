@@ -4,10 +4,16 @@ import './App.css';
 import CommitList from './components/CommitList'
 import Typography from '@material-ui/core/Typography';
 import 'typeface-roboto';
+import axios from 'axios';
 
 // Color scheme: https://coolors.co/06aed5-086788-f0c808-fff1d0-dd1c1a
 
 function App() {
+  const proxy = 'https://thawing-brook-99242.herokuapp.com/'
+  let test = axios.get(proxy + "http://038878d3.ngrok.io/ci/get")
+    .then((res) => {
+      console.log(res);
+    })
   return (
     <div className="App">
       <header className="App-header">
