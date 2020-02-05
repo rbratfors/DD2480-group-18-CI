@@ -1,4 +1,4 @@
-package resources;
+package buildtools;
 
 import java.io.IOException;
 
@@ -25,8 +25,6 @@ public class RunBash {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        printBash(commands);
-
         return commands;
     }
 
