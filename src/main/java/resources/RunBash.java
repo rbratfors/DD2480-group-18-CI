@@ -1,3 +1,4 @@
+package resources;
 
 import java.io.IOException;
 
@@ -72,6 +73,25 @@ public class RunBash {
         }
         output.add("\n");
         return output;
+    }
+
+    private void printBash(ArrayList<ArrayList<String>> commands) {
+        int exitValue;
+        ArrayList<Integer> exitValues = new ArrayList<Integer>();
+        int i = 1;
+        for(ArrayList<String> cmd : commands) {
+            int ev = Integer.parseInt(cmd.get(cmd.size()-1));
+            exitValues.add(ev);
+            System.out.println("**************************");
+            System.out.println("Command " + i);
+            cmd.remove(cmd.size()-1);
+            for(String s : cmd) {
+                System.out.println(s);
+            }
+            System.out.println("Exit value: " + ev);
+            System.out.println("**************************");
+            i++;
+        }
     }
 
 

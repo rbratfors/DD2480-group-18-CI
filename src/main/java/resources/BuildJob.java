@@ -1,6 +1,8 @@
 package resources;
 
 import java.io.File;
+import java.util.ArrayList;
+
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.lib.Repository;
@@ -34,9 +36,13 @@ public class BuildJob {
 
     // TODO:
     // if hasBuildFile:
-    //   [status, log] = call RunBash.run(f.getPath())
+    //   [status, log] = call resources.RunBash.run(f.getPath())
 
-    // Mock, should be a call to RunBash.run
+    // Mock, should be a call to resources.RunBash.run
+/*  CHECK THIS OUT, Needs to be implemented correctly
+    String repoDir = "repo/";
+    ArrayList<ArrayList<String>> commands = RunBash.run(repoDir);
+    */
     if (hasBuildFile) {
       BuildJob.success(jobID, "Found build file.");
     } else {
