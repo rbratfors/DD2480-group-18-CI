@@ -1,13 +1,20 @@
 package buildtools;
 
 public class Build {
+    public enum Result {
+        pending,
+        success,
+        failure,
+        error
+    }
+
     private String jobID;
-    private String status;
+    private Result status;
     private String commitSha;
     private String url;
     private String log;
 
-    public Build(String jobID, String status, String commitSha, String url, String log) {
+    public Build(String jobID, Result status, String commitSha, String url, String log) {
         this.jobID = jobID;
         this.status = status;
         this.commitSha = commitSha;
@@ -19,7 +26,7 @@ public class Build {
         return jobID;
     }
 
-    public String getStatus() {
+    public Result getStatus() {
         return status;
     }
 
@@ -39,7 +46,7 @@ public class Build {
         this.jobID = jobID;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(Result status) {
         this.status = status;
     }
 
