@@ -44,3 +44,4 @@ build
 
 # Frontend
 node_modules/
+.env

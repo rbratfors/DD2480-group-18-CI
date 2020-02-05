@@ -4,16 +4,22 @@ import './App.css';
 import CommitList from './components/CommitList'
 import Typography from '@material-ui/core/Typography';
 import 'typeface-roboto';
-import axios from 'axios';
+import { makeStyles } from '@material-ui/core/styles';
 
 // Color scheme: https://coolors.co/06aed5-086788-f0c808-fff1d0-dd1c1a
 
+
+const useStyles = makeStyles(theme => ({
+  title: {
+    display: 'inline',
+    color: '#F0C808',
+    fontFamily: 'Roboto',
+  }
+}));
+
 function App() {
-  const proxy = 'https://thawing-brook-99242.herokuapp.com/'
-  let test = axios.get(proxy + "http://038878d3.ngrok.io/ci/get")
-    .then((res) => {
-      console.log(res);
-    })
+  const classes = useStyles();
+
   return (
     <div className="App">
       <header className="App-header">
@@ -21,11 +27,7 @@ function App() {
           <Typography
                   component="span"
                   variant="h2"
-                  className={{
-                    display: 'inline',
-                    color: '#06AED5',
-                    fontFamily: 'Roboto'
-                  }}
+                  className={classes.title}
           >
                   {"CI build list"}
           </Typography>

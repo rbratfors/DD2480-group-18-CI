@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
@@ -8,6 +8,7 @@ import ListItemAvatar from '@material-ui/core/ListItemAvatar';
 import Avatar from '@material-ui/core/Avatar';
 import Typography from '@material-ui/core/Typography';
 import 'typeface-roboto';
+import axios from 'axios';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -27,80 +28,59 @@ const useStyles = makeStyles(theme => ({
 
 export default function CommitList() {
   const classes = useStyles();
+  const [builds, setState] = useState({});
+
+  useEffect(() => {
+    axios.get(process.env.REACT_APP_PROXY + process.env.REACT_APP_URL + "/ci/get")
+    .then((res) => {
+      setState(res['data'])
+    })
+    .catch((e) => {
+      setState({});
+    })
+
+  }, [])
+
 
   return (
     <List className={classes.root}>
-      <ListItem alignItems="flex-start">
-        <ListItemText
-          primary={
-          <React.Fragment>
-            <Typography
-                component="span"
-                variant="h6"
-                className={classes.inline}
-                color="textPrimary"
-            >
-                Checks failed
-            </Typography>
-          </React.Fragment>
-        }
-          secondary={
+      {Object.keys(builds).map((key, index) => {
+        return (<ListItem key={key} alignItems="flex-start">
+          <ListItemText
+            primary={
             <React.Fragment>
               <Typography
-                component="span"
-                variant="body2"
-                className={classes.inline}
-                color="textPrimary"
+                  component="span"
+                  variant="h6"
+                  className={classes.inline}
+                  color="textPrimary"
               >
-                Compilation error
-              </Typography>
-              <Typography
-                component="span"
-                variant="body2"
-                className={classes.inline}
-              >
-                  {" - blablabla javakod"}
+                  {builds[key].status}
               </Typography>
             </React.Fragment>
           }
-        />
-      </ListItem>
-      <Divider variant="inset" component="li" />
-      <ListItem alignItems="flex-start">
-        <ListItemText
-          primary={
-            <React.Fragment>
+            secondary={
+              <React.Fragment>
                 <Typography
-                    component="span"
-                    variant="h6"
-                    className={classes.inline}
-                    color="textPrimary"
+                  component="span"
+                  variant="body2"
+                  className={classes.inline}
+                  color="textPrimary"
                 >
-                    Checks passed
+                  {builds[key].commitSha}
                 </Typography>
-            </React.Fragment>
-          }
-          secondary={
-            <React.Fragment>
-              <Typography
-                component="span"
-                variant="body2"
-                className={classes.inline}
-                color="textPrimary"
-              >
-                Passed
-              </Typography>
-              <Typography
-                component="span"
-                variant="body2"
-                className={classes.inline}
-              >
-                  {" - Great job, well done"}
-              </Typography>
-            </React.Fragment>
-          }
-        />
-      </ListItem>
+                <Typography
+                  component="span"
+                  variant="body2"
+                  className={classes.inline}
+                >
+                    {" - blablabla javakod"}
+                </Typography>
+              </React.Fragment>
+            }
+          />
+        </ListItem>)
+      })}
     </List>
   );
 }
