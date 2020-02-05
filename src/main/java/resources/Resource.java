@@ -1,10 +1,15 @@
 package resources;
 
 import buildtools.Build;
+import buildtools.BuildJob;
+
 import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.UUID;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
@@ -56,6 +61,13 @@ public class Resource {
      * @return
      * @throws IOException
      */
+
+    ExecutorService jobsQueue = Executors.newFixedThreadPool(10);
+
+    // A list of of builds is sent by returning List<Build> instead.
+    // TODO
+    // load a previous build from storage
+    // load multiple previous builds from storage
     @GET
     @Path("get")
     @Produces("application/json")
@@ -93,10 +105,16 @@ public class Resource {
         // 5. store build data
         // 6. set commit status to success/fail/error
 
-        System.out.println();
+        String jobID = UUID.randomUUID().toString();
+
         JSONObject json = new JSONObject(payload);
-        //String cloneURL = json.getJSONObject("repository").getString("clone_url");
-        System.out.println(payload);
+        JSONObject repository = json.getJSONObject("repository");
+        String branchRef = json.getString("ref");
+        String cloneUrl = repository.getString("clone_url");
+
+        // Run build jobs asynchronously
+        Runnable job = () -> BuildJob.run(jobID, cloneUrl, branchRef);
+        jobsQueue.execute(job);
 
         return Response.status(200).build();
     }
