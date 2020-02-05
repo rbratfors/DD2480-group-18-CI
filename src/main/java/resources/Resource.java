@@ -1,7 +1,11 @@
 package resources;
 
 import buildtools.Build;
+import buildtools.BuildJob;
+
 import org.json.JSONObject;
+
+import java.util.UUID;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
@@ -40,10 +44,14 @@ public class Resource {
         // 5. store build data
         // 6. set commit status to success/fail/error
 
-        System.out.println();
+        String jobID = UUID.randomUUID().toString();
+
         JSONObject json = new JSONObject(payload);
-        //String cloneURL = json.getJSONObject("repository").getString("clone_url");
-        System.out.println(payload);
+        JSONObject repository = json.getJSONObject("repository");
+        String branchRef = json.getString("ref");
+        String cloneUrl = repository.getString("clone_url");
+
+        BuildJob.run(jobID, cloneUrl, branchRef);
 
         return Response.status(200).build();
     }
