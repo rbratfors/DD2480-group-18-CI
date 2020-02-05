@@ -3,6 +3,8 @@
  */
 package resources;
 
+import buildtools.Build;
+
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.File;
@@ -56,18 +58,18 @@ public class Storage {
      * @param header commit header
      * @param body commit message
      */
-    public void post(WebhookResource.Build build) throws IOException {
+    public void post(Build build) throws IOException {
         File db = new File(fileName);
         if (!db.exists()) {
             throw new IOException("Database file not found");
         } else {
             JSONObject dbJSON = parseJSON(fileName);
             JSONObject data = new JSONObject();
-            data.put("status", build.status);
-            data.put("commitSha", build.commitSha);
-            data.put("url", build.url);
-            data.put("log", build.log);
-            dbJSON.put(build.jobID, data);
+            data.put("status", build.getStatus());
+            data.put("commitSha", build.getCommitSha());
+            data.put("url", build.getUrl());
+            data.put("log", build.getLog());
+            dbJSON.put(build.getJobID(), data);
 
             // Write to JSON file
             try (FileWriter file = new FileWriter(fileName)) {
