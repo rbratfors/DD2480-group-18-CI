@@ -106,8 +106,8 @@ public class RunBash {
         pb.directory(new File(buildDirectoryPath));
         Process p = pb.start();
 
-        ArrayList<String> cmdOutput = output("Command output:", p.getInputStream());
-        cmdOutput.addAll(output("Command errors:", p.getErrorStream()));
+        ArrayList<String> cmdOutput = output(p.getInputStream());
+        cmdOutput.addAll(output(p.getErrorStream()));
         p.waitFor();
         int eValue = p.exitValue();
         cmdOutput.add(Integer.toString(eValue));
