@@ -1,72 +1,24 @@
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.ServletException;
-
-import java.io.IOException;
-
 import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.server.Request;
-import org.eclipse.jetty.server.handler.AbstractHandler;
-import org.eclipse.jgit.api.Git;
-import org.eclipse.jgit.api.errors.GitAPIException;
 
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
-
-import java.io.File;
-
-import java.util.regex.Pattern;
-import java.util.regex.Matcher;
 import java.util.*;
 
 /** 
  Skeleton of a ContinuousIntegrationServer which acts as webhook
  See the Jetty documentation for API documentation of those classes.
 */
-public class ContinuousIntegrationServer extends AbstractHandler
-{
-    public void handle(String target,
-                       Request baseRequest,
-                       HttpServletRequest request,
-                       HttpServletResponse response) 
-        throws IOException, ServletException
-    {
-        response.setContentType("text/html;charset=utf-8");
-        response.setStatus(HttpServletResponse.SC_OK);
-        baseRequest.setHandled(true);
+import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.servlet.ServletContextHandler;
+import org.eclipse.jetty.servlet.ServletHolder;
+import org.glassfish.jersey.servlet.ServletContainer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-        System.out.println(target);
+import static org.eclipse.jetty.servlet.ServletContextHandler.NO_SESSIONS;
 
-        String repoDir = "repo/";
-        
-        // here you do all the continuous integration tasks
-        // for example
-        // 1st clone your repository
-        /*
-        try {
-            Git git = Git.cloneRepository().setURI("https://github.com/eclipse/jgit.git").call();
-        } catch (GitAPIException e) {
-            e.printStackTrace();
-        }
-        */
-        // 2nd set pending status on repo
-        
-
-        // 3rd compile the code
-        //RunBash.run(repoDir);
-
-        // 4th set status depending on compilation success
-
-        response.getWriter().println("CI job done.");
-    }
+public class ContinuousIntegrationServer {
 
     // prints output, errors and exit value of bash executions
-    private static void printBash(ArrayList<ArrayList<String>> commands) {
+    private void printBash(ArrayList<ArrayList<String>> commands) {
         int exitValue;
         ArrayList<Integer> exitValues = new ArrayList<Integer>();
         int i = 1;
@@ -85,18 +37,35 @@ public class ContinuousIntegrationServer extends AbstractHandler
         }
     }
 
-    // used to start the CI server in command line
-    public static void main(String[] args) throws Exception
-    {   
-        // Test call to run bash
+    private static final Logger logger = LoggerFactory.getLogger(ContinuousIntegrationServer.class);
+
+    public static void main(String[] args) {
+
+        Server server = new Server(8018);
+
+        ServletContextHandler servletContextHandler = new ServletContextHandler(NO_SESSIONS);
+
+        servletContextHandler.setContextPath("/");
+        server.setHandler(servletContextHandler);
+
+        ServletHolder servletHolder = servletContextHandler.addServlet(ServletContainer.class, "/*");
+        servletHolder.setInitOrder(0);
+        servletHolder.setInitParameter("jersey.config.server.provider.packages", "resources");
+
         String repoDir = "repo/";
         ArrayList<ArrayList<String>> commands = RunBash.run(repoDir);
-        printBash(commands);
-    /*
-        Server server = new Server(8018);
-        server.setHandler(new ContinuousIntegrationServer());
-        server.start();
-        server.join();
-     */
+        //printBash(commands);
+
+        try {
+            server.start();
+            server.join();
+        } catch (Exception ex) {
+            logger.error("Error occurred while starting Jetty", ex);
+            System.exit(1);
+        }
+
+        finally {
+            server.destroy();
+        }
     }
 }
