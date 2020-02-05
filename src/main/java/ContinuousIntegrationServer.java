@@ -11,7 +11,6 @@ import org.eclipse.jetty.servlet.ServletHolder;
 import org.glassfish.jersey.servlet.ServletContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import resources.RunBash;
 
 import static org.eclipse.jetty.servlet.ServletContextHandler.NO_SESSIONS;
 

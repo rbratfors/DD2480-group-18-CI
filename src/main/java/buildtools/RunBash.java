@@ -1,4 +1,4 @@
-package resources;
+package buildtools;
 
 import java.io.IOException;
 
