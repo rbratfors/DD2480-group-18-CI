@@ -39,10 +39,9 @@ public class BuildJob {
     //   [status, log] = call resources.RunBash.run(f.getPath())
 
     // Mock, should be a call to resources.RunBash.run
-/*  CHECK THIS OUT, Needs to be implemented correctly
     String repoDir = "repo/";
     ArrayList<ArrayList<String>> commands = RunBash.run(repoDir);
-    */
+
     if (hasBuildFile) {
       BuildJob.success(jobID, "Found build file.");
     } else {
