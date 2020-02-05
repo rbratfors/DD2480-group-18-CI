@@ -18,13 +18,15 @@ import java.util.*;
 public class RunBash {
 
     // tmp desc: "main" file, returns the output of all commands
-    static ArrayList<ArrayList<String>> run(String path) {
+    public static ArrayList<ArrayList<String>> run(String path) {
         ArrayList<ArrayList<String>> commands = new ArrayList<ArrayList<String>>();
         try {
             commands = readThis(path);
         } catch (Exception e) {
             e.printStackTrace();
         }
+        printBash(commands);
+
         return commands;
     }
 
@@ -63,19 +65,17 @@ public class RunBash {
     }
 
     // tmp desc: reads output and errors of the command execution
-    private static ArrayList<String> output(String prefix, InputStream in) throws Exception {
+    private static ArrayList<String> output(InputStream in) throws Exception {
         String ln;
         BufferedReader reader = new BufferedReader(new InputStreamReader(in));
         ArrayList<String> output = new ArrayList<String>();
-        output.add(prefix);
         while ((ln = reader.readLine()) != null) {
             output.add(ln);
         }
-        output.add("\n");
         return output;
     }
 
-    private void printBash(ArrayList<ArrayList<String>> commands) {
+    private static void printBash(ArrayList<ArrayList<String>> commands) {
         int exitValue;
         ArrayList<Integer> exitValues = new ArrayList<Integer>();
         int i = 1;
@@ -105,8 +105,8 @@ public class RunBash {
         pb.directory(new File(path));
         Process p = pb.start();
 
-        ArrayList<String> cmdOutput = output("Command output:", p.getInputStream());
-        cmdOutput.addAll(output("Command errors:", p.getErrorStream()));
+        ArrayList<String> cmdOutput = output(p.getInputStream());
+        cmdOutput.addAll(output(p.getErrorStream()));
         p.waitFor();
         int eValue = p.exitValue();
         cmdOutput.add(Integer.toString(eValue));
