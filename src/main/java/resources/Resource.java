@@ -1,52 +1,30 @@
 package resources;
 
+import buildtools.Build;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.util.UUID;
 import java.util.ArrayList;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
 
 @Path("ci")
-public class WebhookResource {
+public class Resource {
     Storage storage = new Storage();
-    public enum Result {
-        pending,
-        success,
-        failure,
-        error
-    }
 
-    // Create "build" class for storing and sending
-    public class Build {
-        public String log;
-        public String jobID;
-        public String commitSha;
-        public String url;
-        public Result status;
-
-        public Build(String log, String jobID, String commitSha, String url, Result status) {
-            this.log = log;
-            this.jobID = jobID;
-            this.commitSha = commitSha;
-            this.url = url;
-            this.status = status;
-        }
-    }
-
-    // EXAMPLE GET REQUEST HANDLER
-    // A list of of builds is sent by returning List<Build> instead.
-    // TODO
-    // load a previous build from storage
-    // load multiple previous builds from storage
+    /**
+     * Fetches all builds from local database
+     * path: /ci/get
+     * @return
+     * @throws IOException
+     */
     @GET
     @Path("get")
     @Produces("application/json")
     public ArrayList<Build> getBuilds() throws IOException {
         JSONObject dbJSON = storage.getAll();
-        ArrayList<WebhookResource.Build> l = new ArrayList<WebhookResource.Build>();
+        ArrayList<Build> l = new ArrayList<Build>();
 
         // go through every job
         for (String key : dbJSON.keySet()) {
@@ -58,25 +36,25 @@ public class WebhookResource {
 
             // fix status
             String tempStatus = current.getString("status");
-            Result status;
+            Build.Result status;
             switch (tempStatus) {
                 case "success":
-                    status = Result.success;
+                    status = Build.Result.success;
                     break;
                 case "pending":
-                    status = Result.pending;
+                    status = Build.Result.pending;
                     break;
                 case "failure":
-                    status = Result.failure;
+                    status = Build.Result.failure;
                     break;
                 case "error":
-                    status = Result.error;
+                    status = Build.Result.error;
                     break;
                 default:
                     throw new IOException("Invalid 'status' in database");
             }
 
-            Build b = new Build(log, jobID, commitSha, url, status);
+            Build b = new Build(jobID, status, commitSha, url, log);
             l.add(b);
         }
 
@@ -92,25 +70,22 @@ public class WebhookResource {
         // TODO
         // 1. set commit status to pending
         // 2. clone repository
+        /*
+        try {
+            Git git = Git.cloneRepository().setURI("https://github.com/eclipse/jgit.git").call();
+        } catch (GitAPIException e) {
+            e.printStackTrace();
+        }
+        */
         // 3. build
         // 4. run tests
         // 5. store build data
         // 6. set commit status to success/fail/error
 
-        // here you do all the continuous integration tasks
-        // for example
-        // 1st clone your repository
-
-        String jobID = UUID.randomUUID().toString();
-
+        System.out.println();
         JSONObject json = new JSONObject(payload);
-        JSONObject repository = json.getJSONObject("repository");
-
-        String branchRef = json.getString("ref");
-        String cloneURL = repository.getString("clone_url");
-
-        // Run job, should be done as an ExecutorService
-        BuildJob.run(jobID, cloneURL, branchRef);
+        //String cloneURL = json.getJSONObject("repository").getString("clone_url");
+        System.out.println(payload);
 
         return Response.status(200).build();
     }
