@@ -65,15 +65,13 @@ public class RunBash {
     }
 
     // tmp desc: reads output and errors of the command execution
-    private static ArrayList<String> output(String prefix, InputStream in) throws Exception {
+    private static ArrayList<String> output(InputStream in) throws Exception {
         String ln;
         BufferedReader reader = new BufferedReader(new InputStreamReader(in));
         ArrayList<String> output = new ArrayList<String>();
-        output.add(prefix);
         while ((ln = reader.readLine()) != null) {
             output.add(ln);
         }
-        output.add("\n");
         return output;
     }
 
