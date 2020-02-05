@@ -30,8 +30,10 @@ public class BuildJob {
     File[] rootFiles = root.listFiles();
 
     Boolean hasBuildFile = false;
+    String buildConfigPath = "";
     for (File f : rootFiles) {
         hasBuildFile |= f.getPath().equals("./" + jobID + "/" + BUILD_CONFIG_FILE_NAME);
+        buildConfigPath = f.getPath();
     }
 
     // TODO:
@@ -39,10 +41,14 @@ public class BuildJob {
     //   [status, log] = call resources.RunBash.run(f.getPath())
 
     // Mock, should be a call to resources.RunBash.run
-    String repoDir = "repo/";
-    ArrayList<ArrayList<String>> commands = RunBash.run(repoDir);
 
     if (hasBuildFile) {
+      ArrayList<ArrayList<String>> commands = RunBash.run(buildConfigPath);
+      for (ArrayList<String> command : commands) {
+        for (String ln : command) {
+          System.out.println(ln);
+        }
+      }
       BuildJob.success(jobID, "Found build file.");
     } else {
       BuildJob.fail(jobID, "Failed to find a build file.");
