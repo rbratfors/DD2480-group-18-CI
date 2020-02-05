@@ -95,6 +95,7 @@ public class RunBash {
     }
 
 
+
     // tmp desc: runs the String as a bash command and returns the outputs, errors and exit value
     private static ArrayList<String> runCommand(String line, String path) throws Exception {
 
