@@ -18,7 +18,7 @@ public class BuildJob {
     List<ArrayList<String>> log = new ArrayList<ArrayList<String>>();
     ArrayList<String> logEntry = new ArrayList<String>();
     logEntry.add("Running build job with id " + jobID);
-    log.add(logEntry);
+    log.add(new ArrayList(logEntry));
 
 
     System.out.println("Running build job with id " + jobID);
@@ -38,7 +38,7 @@ public class BuildJob {
 
     logEntry.clear();
     logEntry.add("Cloning repository.");
-    log.add(logEntry);
+    log.add(new ArrayList(logEntry));
 
 
     Git git = null;
@@ -53,7 +53,7 @@ public class BuildJob {
       e.printStackTrace();
       logEntry.clear();
       logEntry.add("Failed to clone repository " + cloneURL);
-      log.add(logEntry);
+      log.add(new ArrayList(logEntry));
       BuildJob.fail(jobID, log);
       return;
     }
@@ -80,7 +80,7 @@ public class BuildJob {
 
       logEntry.clear();
       logEntry.add("Found build file.");
-      log.add(logEntry);
+      log.add(new ArrayList(logEntry));
       log.addAll(commands);
 
       BuildJob.success(jobID, log);
@@ -88,7 +88,7 @@ public class BuildJob {
 
       logEntry.clear();
       logEntry.add("Failed to find a build file.");
-      log.add(logEntry);
+      log.add(new ArrayList(logEntry));
 
       BuildJob.fail(jobID, log);
     }
