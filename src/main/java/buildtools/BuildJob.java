@@ -81,6 +81,7 @@ public class BuildJob {
       logEntry.clear();
       logEntry.add("Found build file.");
       log.add(logEntry);
+      log.addAll(commands);
 
       BuildJob.success(jobID, log);
     } else {
