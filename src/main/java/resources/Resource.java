@@ -104,6 +104,7 @@ public class Resource {
         // 4. run tests
         // 5. store build data
         // 6. set commit status to success/fail/error
+        //
 
         String jobID = UUID.randomUUID().toString();
 
@@ -111,9 +112,19 @@ public class Resource {
         JSONObject repository = json.getJSONObject("repository");
         String branchRef = json.getString("ref");
         String cloneUrl = repository.getString("clone_url");
+        String sha = json.getJSONObject("commits").getString("id");
+        String owner = json.getJSONObject("repository").getJSONObject("owner").getString("name");
+        String repo = json.getJSONObject("repository").getString("name");
+
 
         // Run build jobs asynchronously
-        Runnable job = () -> BuildJob.run(jobID, cloneUrl, branchRef);
+        Runnable job = () -> {
+            try {
+                BuildJob.run(jobID, cloneUrl, branchRef, sha, owner, repo);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        };
         jobsQueue.execute(job);
 
         return Response.status(200).build();
