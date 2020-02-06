@@ -4,9 +4,11 @@ import buildtools.Build;
 import buildtools.BuildJob;
 
 import org.json.JSONObject;
+import org.json.JSONArray;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -28,7 +30,19 @@ public class Resource {
         String jobID = key;
         String commitSha = o.getString("commitSha");
         String url = o.getString("url");
-        String log = o.getString("log");
+        JSONArray allLogsJson = o.getJSONArray("log");
+
+        List<ArrayList<String>> log = new ArrayList<ArrayList<String>>();
+
+        for (int i = 0; i < allLogsJson.length(); i++) {
+            JSONArray logCommandJSON = allLogsJson.getJSONArray(i);
+            ArrayList<String> logCommand = new ArrayList<String>();
+
+            for (int j = 0; j < logCommandJSON.length(); j++) {
+                logCommand.add(logCommandJSON.getString(j));
+            }
+            log.add(logCommand);
+        }
 
         // fix status
         String tempStatus = o.getString("status");

@@ -3,6 +3,7 @@ package buildtools;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
@@ -12,12 +13,19 @@ import resources.Storage;
 
 // JobId, CloneUrl, Branch, sha ref ska skickar med
 public class BuildJob {
+
     public static String BUILD_CONFIG_FILE_NAME = ".dd.yml";
     private static Storage storage = new Storage();
 
     public static void run(String jobID, String cloneURL, String branchRef, String sha, String owner, String repo) throws IOException {
+        List<ArrayList<String>> log = new ArrayList<ArrayList<String>>();
+        ArrayList<String> logEntry = new ArrayList<String>();
+        logEntry.add("Running build job with id " + jobID);
+        log.add(new ArrayList(logEntry));
+
+
         System.out.println("Running build job with id " + jobID);
-        Build pendingBuild = new Build(jobID, Build.Result.pending, "", "", "");
+        Build pendingBuild = new Build(jobID, Build.Result.pending, "", "",  log);
         StatusUpdater.updateStatus(owner, repo, sha, Build.Result.pending);
 
         try {
@@ -25,10 +33,16 @@ public class BuildJob {
 
         } catch (IOException e) {
             e.printStackTrace();
-            BuildJob.fail(jobID, "Internal issue. Contact support.", sha, owner, repo, Build.Result.error);
+            logEntry.clear();
+            logEntry.add("Internal issue. Contact support.");
+            log.add(logEntry);
+            BuildJob.fail(jobID, log, sha, owner, repo, Build.Result.error);
             return;
         }
 
+        logEntry.clear();
+        logEntry.add("Cloning repository.");
+        log.add(new ArrayList(logEntry));
 
         Git git = null;
         try {
@@ -40,9 +54,13 @@ public class BuildJob {
 
         } catch (GitAPIException e) {
             e.printStackTrace();
-            BuildJob.fail(jobID, "Failed to clone repository " + cloneURL, sha, owner, repo, Build.Result.error);
+            logEntry.clear();
+            logEntry.add("Failed to clone repository " + cloneURL);
+            log.add(new ArrayList(logEntry));
+            BuildJob.fail(jobID, log, sha, owner, repo, Build.Result.error);
             return;
         }
+
 
         Repository repository = git.getRepository();
         File root = repository.getWorkTree();
@@ -69,45 +87,36 @@ public class BuildJob {
             }
             for (int ev : exitValues) {
                 if (ev != 0) {
-                    BuildJob.fail(jobID, "Failed, exit value non-zero", sha, owner, repo, Build.Result.failure);
+                    logEntry.clear();
+                    logEntry.add("Failed, exit value non-zero.");
+                    log.add(new ArrayList(logEntry));
+                    log.addAll(commands);
+                    BuildJob.fail(jobID, log, sha, owner, repo, Build.Result.failure);
                     break;
                 }
             }
-            BuildJob.success(jobID, "Found build file.", sha, owner, repo);
+            logEntry.clear();
+            logEntry.add("Found build file.");
+            log.add(new ArrayList(logEntry));
+            log.addAll(commands);
+
+            BuildJob.success(jobID, log, sha, owner, repo);
 
         } else {
-            BuildJob.fail(jobID, "Failed to find a build file.", sha, owner, repo, Build.Result.error);
+            logEntry.clear();
+            logEntry.add("Failed to find a build file.");
+            log.add(new ArrayList(logEntry));
+
+            BuildJob.fail(jobID, log, sha, owner, repo, Build.Result.error);
         }
-
-
-        System.out.println("Finished build job with id " + jobID);
-    }
-
-    public static void fail(String jobID, String log, String sha, String owner, String repo, Build.Result status) throws IOException {
-        // TODO:
-        // Call notification engine
-
-        Build failedBuild = new Build(jobID, status, "", "", "");
-        StatusUpdater.updateStatus(owner, repo, sha, status);
-        try {
-
-            BuildJob.storage.post(failedBuild);
-
-        } catch (IOException e) {
-            e.printStackTrace();
-            return;
-        }
-
-        System.out.println("Failed job " + jobID + " with log ");
-        System.out.println(log);
 
     }
 
-    public static void success(String jobID, String log, String sha, String owner, String repo) throws IOException {
+    private static void success(String jobID, List<ArrayList<String>> log, String sha, String owner, String repo) throws IOException {
         // TODO:
         // Call notification engine
 
-        Build succeededBuild = new Build(jobID, Build.Result.success, "", "", "");
+        Build succeededBuild = new Build(jobID, Build.Result.success, "", "", log);
         StatusUpdater.updateStatus(owner, repo, sha, Build.Result.success);
         try {
             BuildJob.storage.post(succeededBuild);
@@ -119,5 +128,26 @@ public class BuildJob {
 
         System.out.println("Succeeded job " + jobID + " with log ");
         System.out.println(log);
+    }
+
+    public static void fail(String jobID, List<ArrayList<String>> log, String sha, String owner, String repo, Build.Result status) throws IOException {
+        // TODO:
+        // Call notification engine
+
+        Build failedBuild = new Build(jobID, Build.Result.failure, "", "", log);
+        try {
+            BuildJob.storage.post(failedBuild);
+
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            return;
+        }
+
+        System.out.println("Failed job " + jobID + " with log ");
+        System.out.println(log);
+
+
+
     }
 }

@@ -1,5 +1,8 @@
 package buildtools;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Build {
     public enum Result {
         pending,
@@ -12,9 +15,9 @@ public class Build {
     private Result status;
     private String commitSha;
     private String url;
-    private String log;
+    private List<ArrayList<String>> log;
 
-    public Build(String jobID, Result status, String commitSha, String url, String log) {
+    public Build(String jobID, Result status, String commitSha, String url, List<ArrayList<String>> log) {
         this.jobID = jobID;
         this.status = status;
         this.commitSha = commitSha;
@@ -38,7 +41,7 @@ public class Build {
         return url;
     }
 
-    public String getLog() {
+    public List<ArrayList<String>> getLog() {
         return log;
     }
 
@@ -58,7 +61,7 @@ public class Build {
         this.url = url;
     }
 
-    public void setLog(String log) {
+    public void setLog(List<ArrayList<String>> log) {
         this.log = log;
     }
 
