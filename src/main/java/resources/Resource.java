@@ -132,13 +132,7 @@ public class Resource {
 
 
         // Run build jobs asynchronously
-        Runnable job = () -> {
-            try {
-                BuildJob.run(jobID, cloneUrl, branchRef, sha, owner, repo);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        };
+        Runnable job = () -> BuildJob.run(jobID, cloneUrl, branchRef);
         jobsQueue.execute(job);
 
         return Response.status(200).build();
