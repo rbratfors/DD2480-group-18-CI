@@ -75,18 +75,38 @@ public class BuildJob {
 
         if (hasBuildConfig) {
             ArrayList<ArrayList<String>> commands = RunBash.run(buildDirectory, buildConfig);
+            ArrayList<Integer> exitValues = new ArrayList<Integer>();
+
+            boolean failedBuild = false;
+
             for (ArrayList<String> command : commands) {
+                int ev = Integer.parseInt(command.get(command.size() - 1));
+                exitValues.add(ev);
+                command.remove(command.size() - 1);
                 for (String ln : command) {
                     System.out.println(ln);
                 }
             }
+            for (int ev : exitValues) {
+                if (ev != 0)
+                    failedBuild = true;
+            }
 
             logEntry.clear();
-            logEntry.add("Found build file.");
-            log.add(new ArrayList<>(logEntry));
-            log.addAll(commands);
+            if (failedBuild) {
+                //TODO: differentiate between test and build, currently we only have build implemented
+                logEntry.add("Build or test failed, an exit-value was non-zero");
+                log.add(new ArrayList<>(logEntry));
+                log.addAll(commands);
 
-            BuildJob.success(jobID, log, owner, repo, commitSha);
+                BuildJob.fail(jobID, log, owner, repo, commitSha);
+            } else {
+                logEntry.add("Found build file.");
+                log.add(new ArrayList<>(logEntry));
+                log.addAll(commands);
+
+                BuildJob.success(jobID, log, owner, repo, commitSha);
+            }
         } else {
 
             logEntry.clear();
@@ -162,6 +182,20 @@ public class BuildJob {
      * @param repo
      * @param commitSha
      */
-    public static void fail(String jobID, List<ArrayList<String>> log, String owner, String repo, String commitSha) {}
+    public static void fail(String jobID, List<ArrayList<String>> log, String owner, String repo, String commitSha) {
+        Build failedBuild = new Build(jobID, Build.Result.failure, "", "", log);
+        StatusUpdater.updateStatus(owner, repo, commitSha, Build.Result.failure);
+
+        try {
+            BuildJob.storage.post(failedBuild);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            return;
+        }
+
+        System.out.println("Failed job " + jobID + " with log ");
+        System.out.println(log);
+    }
 
 }
