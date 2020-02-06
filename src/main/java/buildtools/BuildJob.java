@@ -14,9 +14,7 @@ public class BuildJob {
   public static String BUILD_CONFIG_FILE_NAME = ".dd.yml";
   private static Storage storage = new Storage();
   public static void run(String jobID, String cloneURL, String branchRef) {
-    // TODO: update database that status is "started"
     System.out.println("Running build job with id " + jobID);
-
     Build pendingBuild = new Build(jobID, Build.Result.pending, "", "", "");
 
     try {
@@ -83,7 +81,6 @@ public class BuildJob {
       return;
     }
     
-    // Mock:
     System.out.println("Failed job " + jobID + " with log ");
     System.out.println(log);
 
@@ -102,7 +99,6 @@ public class BuildJob {
       return;
     }
 
-    // Mock:
     System.out.println("Succeeded job " + jobID + " with log ");
     System.out.println(log);
   }
