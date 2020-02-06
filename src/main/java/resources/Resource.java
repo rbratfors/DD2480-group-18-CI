@@ -122,17 +122,20 @@ public class Resource {
 
         String jobID = UUID.randomUUID().toString();
 
+
         JSONObject json = new JSONObject(payload);
         JSONObject repository = json.getJSONObject("repository");
+
+        String owner = repository.getJSONObject("owner").getString("name");
+        String repo = repository.getString("name");
+        String commitSha = json.getJSONArray("commits").getJSONObject(0).getString("id");
+
         String branchRef = json.getString("ref");
         String cloneUrl = repository.getString("clone_url");
-        String sha = json.getJSONObject("commits").getString("id");
-        String owner = json.getJSONObject("repository").getJSONObject("owner").getString("name");
-        String repo = json.getJSONObject("repository").getString("name");
 
 
         // Run build jobs asynchronously
-        Runnable job = () -> BuildJob.run(jobID, cloneUrl, branchRef);
+        Runnable job = () -> BuildJob.run(jobID, cloneUrl, branchRef, owner, repo, commitSha);
         jobsQueue.execute(job);
 
         return Response.status(200).build();

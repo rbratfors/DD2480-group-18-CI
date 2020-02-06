@@ -14,15 +14,17 @@ import resources.Storage;
 public class BuildJob {
     public static String BUILD_CONFIG_FILE_NAME = ".dd.yml";
     private static Storage storage = new Storage();
-    public static void run(String jobID, String cloneURL, String branchRef) {
-        List<ArrayList<String>> log = new ArrayList<ArrayList<String>>();
-        ArrayList<String> logEntry = new ArrayList<String>();
+
+    public static void run(String jobID, String cloneURL, String branchRef, String owner, String repo, String commitSha) {
+        List<ArrayList<String>> log = new ArrayList<>();
+        ArrayList<String> logEntry = new ArrayList<>();
         logEntry.add("Running build job with id " + jobID);
-        log.add(new ArrayList(logEntry));
+        log.add(new ArrayList<>(logEntry));
 
 
         System.out.println("Running build job with id " + jobID);
-        Build pendingBuild = new Build(jobID, Build.Result.pending, "", "", log);
+        Build pendingBuild = new Build(jobID, Build.Result.pending, commitSha, "", log);
+        StatusUpdater.updateStatus(owner, repo, commitSha, Build.Result.error);
 
         try {
             BuildJob.storage.post(pendingBuild);
@@ -32,16 +34,16 @@ public class BuildJob {
             logEntry.clear();
             logEntry.add("Internal issue. Contact support.");
             log.add(logEntry);
-            BuildJob.fail(jobID, log);
+            BuildJob.error(jobID, log, owner, repo, commitSha);
             return;
         }
 
         logEntry.clear();
         logEntry.add("Cloning repository.");
-        log.add(new ArrayList(logEntry));
+        log.add(new ArrayList<>(logEntry));
 
 
-        Git git = null;
+        Git git;
         try {
             git = Git.cloneRepository()
                     .setURI(cloneURL)
@@ -53,8 +55,8 @@ public class BuildJob {
             e.printStackTrace();
             logEntry.clear();
             logEntry.add("Failed to clone repository " + cloneURL);
-            log.add(new ArrayList(logEntry));
-            BuildJob.fail(jobID, log);
+            log.add(new ArrayList<>(logEntry));
+            BuildJob.error(jobID, log, owner, repo, commitSha);
             return;
         }
 
@@ -66,6 +68,7 @@ public class BuildJob {
         String buildConfig = buildDirectory + "/" + BUILD_CONFIG_FILE_NAME;
 
         boolean hasBuildConfig = false;
+        assert rootFiles != null;
         for (File f : rootFiles) {
             hasBuildConfig |= f.getPath().equals(buildConfig);
         }
@@ -80,27 +83,36 @@ public class BuildJob {
 
             logEntry.clear();
             logEntry.add("Found build file.");
-            log.add(new ArrayList(logEntry));
+            log.add(new ArrayList<>(logEntry));
             log.addAll(commands);
 
-            BuildJob.success(jobID, log);
+            BuildJob.success(jobID, log, owner, repo, commitSha);
         } else {
 
             logEntry.clear();
             logEntry.add("Failed to find a build file.");
-            log.add(new ArrayList(logEntry));
+            log.add(new ArrayList<>(logEntry));
 
-            BuildJob.fail(jobID, log);
+            BuildJob.error(jobID, log, owner, repo, commitSha);
         }
 
         System.out.println("Finished build job with id " + jobID);
     }
 
-    public static void fail(String jobID, List<ArrayList<String>> log) {
-        // TODO:
-        // Call notification engine
+    /**
+     * This function is called if the build cannot be compiled (or error while compiling?).
+     * Updates commit status to "error" and stores the build in the database with its log.
+     * @param jobID
+     * @param log
+     * @param owner
+     * @param repo
+     * @param commitSha
+     */
+    public static void error(String jobID, List<ArrayList<String>> log, String owner, String repo, String commitSha) {
 
-        Build failedBuild = new Build(jobID, Build.Result.failure, "", "", log);
+        Build failedBuild = new Build(jobID, Build.Result.error, "", "", log);
+        StatusUpdater.updateStatus(owner, repo, commitSha, Build.Result.error);
+
         try {
             BuildJob.storage.post(failedBuild);
 
@@ -114,11 +126,20 @@ public class BuildJob {
 
     }
 
-    public static void success(String jobID, List<ArrayList<String>> log) {
-        // TODO:
-        // Call notification engine
+    /**
+     * This function is called if the build successfully compiles and passes all tests.
+     * Updates commit status to "success" and stores the build in the database with its log.
+     * @param jobID
+     * @param log
+     * @param owner
+     * @param repo
+     * @param commitSha
+     */
+    public static void success(String jobID, List<ArrayList<String>> log, String owner, String repo, String commitSha) {
 
         Build succeededBuild = new Build(jobID, Build.Result.success, "", "", log);
+        StatusUpdater.updateStatus(owner, repo, commitSha, Build.Result.success);
+
         try {
             BuildJob.storage.post(succeededBuild);
 
@@ -130,4 +151,17 @@ public class BuildJob {
         System.out.println("Succeeded job " + jobID + " with log ");
         System.out.println(log);
     }
+
+    // TODO
+    /**
+     * This function is called if the build compiles but fails one or more tests.
+     * Updates commit status to "failure" and stores the build in the database with its log.
+     * @param jobID
+     * @param log
+     * @param owner
+     * @param repo
+     * @param commitSha
+     */
+    public static void fail(String jobID, List<ArrayList<String>> log, String owner, String repo, String commitSha) {}
+
 }

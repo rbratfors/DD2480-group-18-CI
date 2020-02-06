@@ -1,6 +1,5 @@
 package buildtools;
 
-import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -10,6 +9,7 @@ import org.json.JSONObject;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 
 public class StatusUpdater {
 
@@ -19,15 +19,20 @@ public class StatusUpdater {
      * @param repo - name of repo
      * @param sha - sha value of commit
      * @param status - pending, success, failure, error
-     * @throws IOException
      */
-    public static void updateStatus(String owner, String repo, String sha, Build.Result status) throws IOException {
+    public static void updateStatus(String owner, String repo, String sha, Build.Result status) {
         String url = "https://api.github.com/repos/" + owner + "/" + repo + "/statuses/" + sha;
         CloseableHttpClient client = HttpClients.createDefault();
         HttpPost httpPost = new HttpPost(url);
 
-        BufferedReader br = new BufferedReader(new FileReader("token"));
-        String token = br.readLine();
+        String token;
+        try {
+            token = new BufferedReader(new FileReader("token")).readLine();
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.err.println("Authorization token not found.");
+            return;
+        }
 
         String description;
         switch (status) {
@@ -51,12 +56,20 @@ public class StatusUpdater {
         json.put("description", description);
         json.put("context", "mobergliuslefors");
 
-        StringEntity entity = new StringEntity(json.toString());
-        httpPost.setEntity(entity);
+        try {
+            httpPost.setEntity(new StringEntity(json.toString()));
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+
         httpPost.setHeader("Authorization", "token " + token);
 
-        CloseableHttpResponse response = client.execute(httpPost);
-        client.close();
+        try {
+            client.execute(httpPost);
+            client.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 }
