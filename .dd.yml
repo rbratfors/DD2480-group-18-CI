@@ -1,1 +1,2 @@
-// build instructions
+Build
+./gradlew build -s
