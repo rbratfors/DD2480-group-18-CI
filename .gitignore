@@ -45,3 +45,4 @@ build
 # Frontend
 node_modules/
 .env
+db.json

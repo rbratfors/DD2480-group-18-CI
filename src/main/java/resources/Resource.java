@@ -1,7 +1,17 @@
 package resources;
 
 import buildtools.Build;
+import buildtools.BuildJob;
+
 import org.json.JSONObject;
+import org.json.JSONArray;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -14,11 +24,67 @@ public class Resource {
     Storage storage = new Storage();
 
     /**
+     * Creates a Build object from a given json object and its key (jobID)
+     * @param key jobID
+     * @param o rest of keys
+     * @return Build object created from given json
+     */
+    private Build json2Build(String key, JSONObject o) throws IOException {
+        String jobID = key;
+        String commitSha = o.getString("commitSha");
+        String url = o.getString("url");
+        JSONArray allLogsJson = o.getJSONArray("log");
+
+        List<ArrayList<String>> log = new ArrayList<ArrayList<String>>();
+
+        for (int i = 0; i < allLogsJson.length(); i++) {
+            JSONArray logCommandJSON = allLogsJson.getJSONArray(i);
+            ArrayList<String> logCommand = new ArrayList<String>();
+
+            for (int j = 0; j < logCommandJSON.length(); j++) {
+                logCommand.add(logCommandJSON.getString(j));
+            }
+            log.add(logCommand);
+        }
+
+        // fix status
+        String tempStatus = o.getString("status");
+        Build.Result status;
+        switch (tempStatus) {
+            case "success":
+                status = Build.Result.success;
+                break;
+            case "pending":
+                status = Build.Result.pending;
+                break;
+            case "failure":
+                status = Build.Result.failure;
+                break;
+            case "error":
+                status = Build.Result.error;
+                break;
+            default:
+                throw new IOException("Invalid 'status' in database");
+        }
+
+        Build b = new Build(jobID, status, commitSha, url, log);
+
+        return b;
+    }
+
+    /**
      * Fetches all builds from local database
      * path: /ci/get
      * @return
      * @throws IOException
      */
+
+    ExecutorService jobsQueue = Executors.newFixedThreadPool(10);
+
+    // A list of of builds is sent by returning List<Build> instead.
+    // TODO
+    // load a previous build from storage
+    // load multiple previous builds from storage
     @GET
     @Path("get")
     @Produces("application/json")
@@ -28,33 +94,7 @@ public class Resource {
 
         // go through every job
         for (String key : dbJSON.keySet()) {
-            JSONObject current = dbJSON.getJSONObject(key);
-            String jobID = key;
-            String commitSha = current.getString("commitSha");
-            String url = current.getString("url");
-            String log = current.getString("log");
-
-            // fix status
-            String tempStatus = current.getString("status");
-            Build.Result status;
-            switch (tempStatus) {
-                case "success":
-                    status = Build.Result.success;
-                    break;
-                case "pending":
-                    status = Build.Result.pending;
-                    break;
-                case "failure":
-                    status = Build.Result.failure;
-                    break;
-                case "error":
-                    status = Build.Result.error;
-                    break;
-                default:
-                    throw new IOException("Invalid 'status' in database");
-            }
-
-            Build b = new Build(jobID, status, commitSha, url, log);
+            Build b = json2Build(key, dbJSON.getJSONObject(key));
             l.add(b);
         }
 
@@ -82,10 +122,16 @@ public class Resource {
         // 5. store build data
         // 6. set commit status to success/fail/error
 
-        System.out.println();
+        String jobID = UUID.randomUUID().toString();
+
         JSONObject json = new JSONObject(payload);
-        //String cloneURL = json.getJSONObject("repository").getString("clone_url");
-        System.out.println(payload);
+        JSONObject repository = json.getJSONObject("repository");
+        String branchRef = json.getString("ref");
+        String cloneUrl = repository.getString("clone_url");
+
+        // Run build jobs asynchronously
+        Runnable job = () -> BuildJob.run(jobID, cloneUrl, branchRef);
+        jobsQueue.execute(job);
 
         return Response.status(200).build();
     }

@@ -18,10 +18,12 @@ import java.util.*;
 public class RunBash {
 
     // tmp desc: "main" file, returns the output of all commands
-    public static ArrayList<ArrayList<String>> run(String path) {
+    // buildDirectoryPath - the relative path to the directory which commands are run in
+    // buildConfigPath - the relative path to the build configuration file
+    public static ArrayList<ArrayList<String>> run(String buildDirectoryPath, String buildConfigPath) {
         ArrayList<ArrayList<String>> commands = new ArrayList<ArrayList<String>>();
         try {
-            commands = readThis(path);
+            commands = readThis(buildDirectoryPath, buildConfigPath);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -30,17 +32,17 @@ public class RunBash {
 
     // tmp desc: reads through a file and searches for key words, then executes command line 
     // below match and returns output of them all
-    private static ArrayList<ArrayList<String>> readThis(String path) throws Exception {
+    private static ArrayList<ArrayList<String>> readThis(String buildDirectoryPath, String buildConfigPath) throws Exception {
         BufferedReader reader;
         ArrayList<ArrayList<String>> commands = new ArrayList<ArrayList<String>>();
         try {
-            reader = new BufferedReader(new FileReader(path + "bash.txt"));
+            reader = new BufferedReader(new FileReader(buildConfigPath));
             String line = reader.readLine();
             while (line != null) {
                 if (exactMatch(line, "Build") || exactMatch(line, "Test") ) {
                     line = reader.readLine();
                     if (line != null) {
-                        commands.add(runCommand(line, path));
+                        commands.add(runCommand(line, buildDirectoryPath));
                     }
                     // read next line
                 }
@@ -73,7 +75,7 @@ public class RunBash {
         return output;
     }
 
-    private static void printBash(ArrayList<ArrayList<String>> commands) {
+    private void printBash(ArrayList<ArrayList<String>> commands) {
         int exitValue;
         ArrayList<Integer> exitValues = new ArrayList<Integer>();
         int i = 1;
@@ -95,13 +97,13 @@ public class RunBash {
 
 
     // tmp desc: runs the String as a bash command and returns the outputs, errors and exit value
-    private static ArrayList<String> runCommand(String line, String path) throws Exception {
+    private static ArrayList<String> runCommand(String line, String buildDirectoryPath) throws Exception {
 
         String[] arr = line.split(" ");
 
         ProcessBuilder pb = new ProcessBuilder(arr);
         pb.redirectErrorStream(true);
-        pb.directory(new File(path));
+        pb.directory(new File(buildDirectoryPath));
         Process p = pb.start();
 
         ArrayList<String> cmdOutput = output(p.getInputStream());
