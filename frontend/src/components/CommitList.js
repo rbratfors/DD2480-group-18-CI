@@ -9,6 +9,7 @@ import Avatar from '@material-ui/core/Avatar';
 import Typography from '@material-ui/core/Typography';
 import 'typeface-roboto';
 import axios from 'axios';
+import checkbox from './../img/checkbox.png';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -24,7 +25,26 @@ const useStyles = makeStyles(theme => ({
     color: '#FFF1D0',
     fontFamily: 'Roboto'
   },
+  success: {
+    color: "red"
+  },
+  failure: {
+    color: "green"
+  },
+  checkbox: {
+    height: 12,
+    width: 12,
+    paddingRight: 8,
+  }
 }));
+
+let firstLetterUppercase = (s) => {
+  let temp = s.slice(0, 1);
+  temp = temp.toUpperCase();
+  s = temp + s.slice(1, s.length);
+
+  return s;
+}
 
 export default function CommitList() {
   const classes = useStyles();
@@ -41,11 +61,64 @@ export default function CommitList() {
 
   }, [])
 
+  let data = {
+      "1": {
+          "log": [
+              [
+                  "first row:)",
+                  "2nd row, more info ye",
+                  "Another row?! madness!"
+              ],
+              [
+                  "here comes test rows",
+                  "teeeeests",
+                  "so coolxd"
+              ]
+          ],
+          "commitSha": "fff",
+          "url": "url",
+          "status": "success"
+      },
+      "sickjobid2": {
+          "log": [
+              [
+                  "rowrow",
+                  "wow"
+              ],
+              [
+                  "here comes test rows",
+                  "teeeeests",
+                  "so coolxd"
+              ]
+          ],
+          "commitSha": "shashasha",
+          "url": "another url",
+          "status": "failure"
+      },
+      "sickjobid": {
+          "log": [
+              [
+                  "actually insane",
+                  "wot",
+                  "buildbuildbuildxD"
+              ],
+              [
+                  "here comes test rows",
+                  "teeeeests",
+                  "so coolxd"
+              ]
+          ],
+          "commitSha": "shasha",
+          "url": "urlll",
+          "status": "failure"
+      }
+  }
 
   return (
     <List className={classes.root}>
-      {Object.keys(builds).map((key, index) => {
-        return (<ListItem key={key} alignItems="flex-start">
+      {Object.keys(data).map((key, index) => {
+        let divider = index !== Object.keys(data).length - 1 ? <Divider variant="inset" component="li" style={{ marginLeft: 16 }}/> : null;
+        return ([<ListItem key={key} alignItems="flex-start">
           <ListItemText
             primary={
             <React.Fragment>
@@ -53,9 +126,10 @@ export default function CommitList() {
                   component="span"
                   variant="h6"
                   className={classes.inline}
-                  color="textPrimary"
+                  color={"textPrimary"}
+                  style={{ color: data[key].status.slice(0, 1) === "s" ? "#FFF1D0" : "#DD524F" }}
               >
-                  {builds[key].status}
+                  {firstLetterUppercase(data[key].status)}
               </Typography>
             </React.Fragment>
           }
@@ -67,7 +141,7 @@ export default function CommitList() {
                   className={classes.inline}
                   color="textPrimary"
                 >
-                  {builds[key].commitSha}
+                  {data[key].commitSha}
                 </Typography>
                 <Typography
                   component="span"
@@ -79,7 +153,7 @@ export default function CommitList() {
               </React.Fragment>
             }
           />
-        </ListItem>)
+        </ListItem>, divider])
       })}
     </List>
   );
