@@ -1,6 +1,8 @@
 package resources;
 
 import buildtools.Build;
+
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -23,7 +25,7 @@ public class Resource {
         String jobID = key;
         String commitSha = o.getString("commitSha");
         String url = o.getString("url");
-        String log = o.getString("log");
+        JSONArray log = o.getJSONArray("log");
 
         // fix status
         String tempStatus = o.getString("status");

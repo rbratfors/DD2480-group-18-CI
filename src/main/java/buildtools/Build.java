@@ -1,5 +1,7 @@
 package buildtools;
 
+import org.json.JSONArray;
+
 public class Build {
     public enum Result {
         pending,
@@ -12,9 +14,9 @@ public class Build {
     private Result status;
     private String commitSha;
     private String url;
-    private String log;
+    private JSONArray log;
 
-    public Build(String jobID, Result status, String commitSha, String url, String log) {
+    public Build(String jobID, Result status, String commitSha, String url, JSONArray log) {
         this.jobID = jobID;
         this.status = status;
         this.commitSha = commitSha;
@@ -38,7 +40,7 @@ public class Build {
         return url;
     }
 
-    public String getLog() {
+    public JSONArray getLog() {
         return log;
     }
 
@@ -58,7 +60,7 @@ public class Build {
         this.url = url;
     }
 
-    public void setLog(String log) {
+    public void setLog(JSONArray log) {
         this.log = log;
     }
 
