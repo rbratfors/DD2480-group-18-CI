@@ -7,43 +7,56 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.json.JSONObject;
 
-import java.io.File;
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.IOException;
 
 public class StatusUpdater {
 
-    public static void updateStatus(String owner, String repo, String sha, String status) throws IOException {
+    /**
+     * Sets commit status. OAuth authorization using /token file in root folder.
+     * @param owner - name of repo owners account
+     * @param repo - name of repo
+     * @param sha - sha value of commit
+     * @param status - pending, success, failure, error
+     * @throws IOException
+     */
+    public static void updateStatus(String owner, String repo, String sha, Build.Result status) throws IOException {
         String url = "https://api.github.com/repos/" + owner + "/" + repo + "/statuses/" + sha;
         CloseableHttpClient client = HttpClients.createDefault();
-        HttpPost httpPost = new HttpPost("http://www.example.com");
+        HttpPost httpPost = new HttpPost(url);
 
-        File tokenFile = new File(".").getParentFile();
-        System.out.println(tokenFile.getPath());
-        /*
+        BufferedReader br = new BufferedReader(new FileReader("token"));
+        String token = br.readLine();
+
+        String description;
+        switch (status) {
+            case pending:
+                description = "Pending";
+                break;
+            case success:
+                description = "Success";
+                break;
+            case failure:
+                description = "Failure";
+                break;
+            default:
+                description = "Error";
+
+        }
+
         JSONObject json = new JSONObject();
-        json.append("state", status);
-        json.append("target_url", "https://www.google.se");
-        json.append("description", "In progress...");
-        json.append("context", "mobergliuslefors");
+        json.put("state", status);
+        json.put("target_url", "https://www.google.se");
+        json.put("description", description);
+        json.put("context", "mobergliuslefors");
 
         StringEntity entity = new StringEntity(json.toString());
         httpPost.setEntity(entity);
-        httpPost.setHeader("Accept", "application/json");
-        httpPost.setHeader("Content-type", "application/json");
+        httpPost.setHeader("Authorization", "token " + token);
 
         CloseableHttpResponse response = client.execute(httpPost);
-        System.out.println(response.getStatusLine().getStatusCode());
         client.close();
-        */
-
     }
 
-    public static void main(String[] args) throws IOException {
-        String owner = "adbjo";
-        String repo = "DD2480-group-18-CI";
-        String sha = "3e23c8d66264d1612095d6dd429976b1fd35073a";
-
-        updateStatus(owner, repo, sha, "pending");
-
-    }
 }
