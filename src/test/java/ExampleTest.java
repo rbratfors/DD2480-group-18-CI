@@ -1,7 +1,11 @@
+import org.junit.Test;
 
-class ExampleTest {
+
+import static org.junit.Assert.assertTrue;
+
+public class ExampleTest {
   @Test
-  void FailingTest() {
+  public void FailingTest() {
     assertTrue(false);
   }
 }
