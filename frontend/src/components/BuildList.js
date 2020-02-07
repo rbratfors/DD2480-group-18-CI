@@ -10,12 +10,12 @@ import Typography from '@material-ui/core/Typography';
 import 'typeface-roboto';
 import axios from 'axios';
 import checkbox from './../img/checkbox.png';
-import { Redirect } from 'react-router-dom';
+import { Redirect, Link } from 'react-router-dom';
 
 const useStyles = makeStyles(theme => ({
   root: {
     width: '100%',
-    maxWidth: 360,
+    maxWidth: "min-content",
     backgroundColor: '#F0C808',
     borderRadius: 16,
     border: 2,
@@ -47,11 +47,13 @@ let firstLetterUppercase = (s) => {
   return s;
 }
 
+/**
+ * Lists all builds.
+ */
 export default function BuildList(props) {
   const [redirect, setRedirect] = useState("");
   const classes = useStyles();
   const builds = props.builds;
-  console.log(props);
 
   if (redirect !== "") {
     return <Redirect push to={"/build?id=" + redirect} />;
@@ -78,21 +80,23 @@ export default function BuildList(props) {
           }
             secondary={
               <React.Fragment>
+                <Link to={`/build/${builds[key].jobID}`}>
                 <Typography
                   component="span"
                   variant="body2"
                   className={classes.inline}
                   color="textPrimary"
                 >
-                  {builds[key].commitSha}
+                  {builds[key].jobID}
                 </Typography>
                 <Typography
                   component="span"
                   variant="body2"
                   className={classes.inline}
                 >
-                    {" - blablabla javakod"}
+                  {builds[key].commitSha}
                 </Typography>
+                </Link>
               </React.Fragment>
             }
           />

@@ -15,22 +15,41 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
+/**
+ * Displays the information of one build. 
+ */
 export default function BuildInfo(props) {
   const classes = useStyles();
   const tempBuilds = props.builds;
-  const build = tempBuilds[props.location.search.slice(4, props.location.search.length)];
+  const build = tempBuilds.find(build => build.jobID === props.location.pathname.slice(7, props.location.pathname.length));
 
   return (
       <header className="App-header">
-        <React.Fragment>
-          <Typography
-                  component="span"
-                  variant="h2"
-                  className={classes.title}
-          >
-                  {!build ? "Loading id..." : build.jobID}
-          </Typography>
-        </React.Fragment>
+        <div style={{display: "block", textAlign: "left", margin: "8px"}}>
+          {!build ? 
+          <p style={{fontSize: "32px", textAlign: "center"}}>Loading id...</p>
+          :
+          <>
+              <p style={{fontSize: "32px"}}>{build.jobID}</p>
+              <p style={{fontSize: "24px", color: "black"}}>Status: {
+                build.status === "success" ? 
+                  <span style={{color: "green"}}>{build.status}</span> : 
+                  <span style={{color: "red"}}>{build.status}</span>
+              }</p>
+              <p style={{fontSize: "24px", color: "black"}}>SHA: {build.commitSha}</p>
+            <Typography
+                    component="p"
+                    variant="h4"
+                    className={classes.title}
+            >
+              Log:
+            </Typography>
+            <ul style={{textAlign: "left"}}>
+              {build.log.map(logEntry => <li>{logEntry.map(ln => <p style={{fontSize: "16px", color: "black"}}>{ln}</p>)} </li>)}
+            </ul>
+          </>
+          }
+        </div>
         <Build {... props} />
       </header>
   );

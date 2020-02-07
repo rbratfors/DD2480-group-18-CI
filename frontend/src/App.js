@@ -23,9 +23,13 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
+
+/**
+ * Main router.
+ */
 function App() {
   const classes = useStyles();
-  const [builds, setState] = useState({});
+  const [builds, setState] = useState([]);
 
   useEffect(() => {
     axios.get(env.REACT_APP_PROXY + env.REACT_APP_URL + "/ci/get")
@@ -33,7 +37,7 @@ function App() {
       setState(res['data'])
     })
     .catch((e) => {
-      setState({});
+      setState([]);
     })
 
   }, [])
