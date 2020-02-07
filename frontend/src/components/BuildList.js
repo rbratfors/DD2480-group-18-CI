@@ -10,6 +10,7 @@ import Typography from '@material-ui/core/Typography';
 import 'typeface-roboto';
 import axios from 'axios';
 import checkbox from './../img/checkbox.png';
+import { Redirect } from 'react-router-dom';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -46,79 +47,21 @@ let firstLetterUppercase = (s) => {
   return s;
 }
 
-export default function CommitList() {
+export default function BuildList(props) {
+  const [redirect, setRedirect] = useState("");
   const classes = useStyles();
-  const [builds, setState] = useState({});
+  const builds = props.builds;
+  console.log(props);
 
-  useEffect(() => {
-    axios.get(process.env.REACT_APP_PROXY + process.env.REACT_APP_URL + "/ci/get")
-    .then((res) => {
-      setState(res['data'])
-    })
-    .catch((e) => {
-      setState({});
-    })
-
-  }, [])
-
-  let data = {
-      "1": {
-          "log": [
-              [
-                  "first row:)",
-                  "2nd row, more info ye",
-                  "Another row?! madness!"
-              ],
-              [
-                  "here comes test rows",
-                  "teeeeests",
-                  "so coolxd"
-              ]
-          ],
-          "commitSha": "fff",
-          "url": "url",
-          "status": "success"
-      },
-      "sickjobid2": {
-          "log": [
-              [
-                  "rowrow",
-                  "wow"
-              ],
-              [
-                  "here comes test rows",
-                  "teeeeests",
-                  "so coolxd"
-              ]
-          ],
-          "commitSha": "shashasha",
-          "url": "another url",
-          "status": "failure"
-      },
-      "sickjobid": {
-          "log": [
-              [
-                  "actually insane",
-                  "wot",
-                  "buildbuildbuildxD"
-              ],
-              [
-                  "here comes test rows",
-                  "teeeeests",
-                  "so coolxd"
-              ]
-          ],
-          "commitSha": "shasha",
-          "url": "urlll",
-          "status": "failure"
-      }
+  if (redirect !== "") {
+    return <Redirect push to={"/build?id=" + redirect} />;
   }
 
   return (
     <List className={classes.root}>
-      {Object.keys(data).map((key, index) => {
-        let divider = index !== Object.keys(data).length - 1 ? <Divider variant="inset" component="li" style={{ marginLeft: 16 }}/> : null;
-        return ([<ListItem key={key} alignItems="flex-start">
+      {Object.entries(builds).length === 0 ? null : Object.keys(builds).map((key, index) => {
+        let divider = index !== Object.keys(builds).length - 1 ? <Divider variant="inset" component="li" style={{ marginLeft: 16 }}/> : null;
+        return ([<ListItem key={key} alignItems="flex-start" onClick={() => setRedirect(key)}>
           <ListItemText
             primary={
             <React.Fragment>
@@ -127,9 +70,9 @@ export default function CommitList() {
                   variant="h6"
                   className={classes.inline}
                   color={"textPrimary"}
-                  style={{ color: data[key].status.slice(0, 1) === "s" ? "#FFF1D0" : "#DD524F" }}
+                  style={{ color: builds[key].status.slice(0, 1) === "s" ? "#FFF1D0" : "#DD524F" }}
               >
-                  {firstLetterUppercase(data[key].status)}
+                  {firstLetterUppercase(builds[key].status)}
               </Typography>
             </React.Fragment>
           }
@@ -141,7 +84,7 @@ export default function CommitList() {
                   className={classes.inline}
                   color="textPrimary"
                 >
-                  {data[key].commitSha}
+                  {builds[key].commitSha}
                 </Typography>
                 <Typography
                   component="span"
