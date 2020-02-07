@@ -5,9 +5,7 @@ import java.io.IOException;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.BufferedReader;
 import java.io.FileReader;
-import java.io.IOException;
 
 import java.io.File;
 
@@ -74,6 +72,26 @@ public class RunBash {
         }
         return output;
     }
+
+    private void printBash(ArrayList<ArrayList<String>> commands) {
+        ArrayList<Integer> exitValues = new ArrayList<>();
+        int i = 1;
+        for(ArrayList<String> cmd : commands) {
+            int ev = Integer.parseInt(cmd.get(cmd.size()-1));
+            exitValues.add(ev);
+            System.out.println("**************************");
+            System.out.println("Command " + i);
+            cmd.remove(cmd.size()-1);
+            for(String s : cmd) {
+                System.out.println(s);
+            }
+            System.out.println("Exit value: " + ev);
+            System.out.println("**************************");
+            i++;
+        }
+    }
+
+
 
     // tmp desc: runs the String as a bash command and returns the outputs, errors and exit value
     private static ArrayList<String> runCommand(String line, String buildDirectoryPath) throws Exception {
