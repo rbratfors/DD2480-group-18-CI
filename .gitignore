@@ -41,4 +41,10 @@ build
 
 # IntelliJ project files
 .idea
+
+
+# Token file
+token
+
 db.json
+
