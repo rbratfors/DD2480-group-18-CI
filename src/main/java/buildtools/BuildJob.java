@@ -130,7 +130,7 @@ public class BuildJob {
      */
     public static void error(String jobID, List<ArrayList<String>> log, String owner, String repo, String commitSha) {
 
-        Build failedBuild = new Build(jobID, Build.Result.error, "", "", log);
+        Build failedBuild = new Build(jobID, Build.Result.error, commitSha, owner + "/" + repo, log);
         StatusUpdater.updateStatus(owner, repo, commitSha, Build.Result.error);
 
         try {
@@ -157,7 +157,7 @@ public class BuildJob {
      */
     public static void success(String jobID, List<ArrayList<String>> log, String owner, String repo, String commitSha) {
 
-        Build succeededBuild = new Build(jobID, Build.Result.success, "", "", log);
+        Build succeededBuild = new Build(jobID, Build.Result.success, commitSha, owner + "/" + repo, log);
         StatusUpdater.updateStatus(owner, repo, commitSha, Build.Result.success);
 
         try {
@@ -183,7 +183,7 @@ public class BuildJob {
      * @param commitSha
      */
     public static void fail(String jobID, List<ArrayList<String>> log, String owner, String repo, String commitSha) {
-        Build failedBuild = new Build(jobID, Build.Result.failure, "", "", log);
+        Build failedBuild = new Build(jobID, Build.Result.failure, commitSha, owner + "/" + repo, log);
         StatusUpdater.updateStatus(owner, repo, commitSha, Build.Result.failure);
 
         try {
