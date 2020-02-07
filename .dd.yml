@@ -1,2 +1,4 @@
 Build
-./gradlew build -s
+./gradlew assemble -s
+Test
+./gradlew test -s

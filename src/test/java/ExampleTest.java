@@ -1,7 +1,7 @@
 
 class ExampleTest {
   @Test
-  void FailingTest() {
-    assertTrue(false);
+  void SucceedingTest() {
+    assertTrue(true);
   }
 }
