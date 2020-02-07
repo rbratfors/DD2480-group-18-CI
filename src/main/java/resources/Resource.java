@@ -3,6 +3,7 @@ package resources;
 import buildtools.Build;
 import buildtools.BuildJob;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONArray;
 
@@ -125,6 +126,12 @@ public class Resource {
 
         JSONObject json = new JSONObject(payload);
         JSONObject repository = json.getJSONObject("repository");
+
+        try {
+            json.getJSONObject("hook");
+            System.out.println("New webhook: " + repository.getString("full_name"));
+            return Response.status(200).build();
+        } catch (JSONException ignored) {}
 
         String owner = repository.getJSONObject("owner").getString("name");
         String repo = repository.getString("name");
