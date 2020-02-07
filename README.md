@@ -5,7 +5,7 @@ A simple continuos integration solution, created for assignment 2 at KTH course 
 #### Noob NoobNoob
 
 
-#### Robin Bråtfors
+#### Noob Bråtfors
 
 #### Gabriel Gessle
 
