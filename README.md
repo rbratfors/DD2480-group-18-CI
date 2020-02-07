@@ -2,7 +2,7 @@
 A simple continuos integration solution, created for assignment 2 at KTH course DD2480. Spring of 2020.
 
 ### Contributions
-#### Adam Noobberg
+#### Adam NoobNoob
 
 
 #### Robin Bråtfors
