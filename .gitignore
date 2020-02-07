@@ -46,3 +46,4 @@ build
 node_modules/
 .env
 db.json
+frontend/src/env.js

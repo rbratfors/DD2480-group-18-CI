@@ -10,6 +10,8 @@ import BuildInfo from './pages/BuildInfo';
 import { Router, Route, BrowserRouter, useLocation, Switch } from 'react-router-dom';
 import axios from 'axios';
 
+import env from './env';
+
 // Color scheme: https://coolors.co/06aed5-086788-f0c808-fff1d0-dd1c1a
 
 
@@ -26,7 +28,7 @@ function App() {
   const [builds, setState] = useState({});
 
   useEffect(() => {
-    axios.get(process.env.REACT_APP_PROXY + process.env.REACT_APP_URL + "/ci/get")
+    axios.get(env.REACT_APP_PROXY + env.REACT_APP_URL + "/ci/get")
     .then((res) => {
       setState(res['data'])
     })

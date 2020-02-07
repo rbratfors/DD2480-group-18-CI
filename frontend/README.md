@@ -1,5 +1,18 @@
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+## ENV
+To run the project, make sure you have a env.js file in root directory with the following code
+```javascript 
+const env = {
+  REACT_APP_URL:<url to ci job server>, 
+  REACT_APP_PROXY:<url to proxy>
+}
+
+export default env;
+```
+
+The reason why we need the above is to come around CORS issues, we use a proxy that adds the required headers.
+
 ## Available Scripts
 
 In the project directory, you can run:
